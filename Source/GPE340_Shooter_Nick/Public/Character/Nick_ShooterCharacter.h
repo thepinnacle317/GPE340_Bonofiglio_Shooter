@@ -9,6 +9,7 @@
 /* Forward Declarations */
 class UCameraComponent;
 class USpringArmComponent;
+class UAnimMontage;
 
 DECLARE_DELEGATE(FFireDelegate);
 
@@ -43,6 +44,10 @@ private:
 	/* Camera that follows the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> FollowCamera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAnimMontage> HipFireMontage;
+	
 
 public:
 

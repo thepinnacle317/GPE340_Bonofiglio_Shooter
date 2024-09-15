@@ -53,5 +53,12 @@ void ANick_ShooterCharacter::Tick(float DeltaTime)
 void ANick_ShooterCharacter::FireWeapon()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Fire Weapon"));
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && HipFireMontage)
+	{
+		AnimInstance->Montage_Play(HipFireMontage);
+		AnimInstance->Montage_JumpToSection(FName("StartFire"));
+	}
 }
 
