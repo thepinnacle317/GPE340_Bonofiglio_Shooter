@@ -6,10 +6,12 @@
 #include "GameFramework/PlayerController.h"
 #include "Nick_ShooterPlayerController.generated.h"
 
+
 /* Forward Declarations */
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
+class ANick_ShooterCharacter;
 
 /**
  * 
@@ -26,7 +28,7 @@ protected:
 
 private:
 
-	TObjectPtr<ACharacter> PossessedCharacter;
+	TObjectPtr<ANick_ShooterCharacter> PossessedCharacter;
 	/* Enhanced Input */
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<UInputMappingContext> ShooterIMC;
@@ -36,10 +38,18 @@ private:
 	TObjectPtr<UInputAction> LookAction;
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<UInputAction> JumpAction;
+	UPROPERTY(EditAnywhere, Category="Input")
+	TObjectPtr<UInputAction> ShootAction;
+	UPROPERTY(EditAnywhere, Category="Input")
+	TObjectPtr<UInputAction> AimAction;
 
 	/* Movement */
 	void Move(const FInputActionValue& InputActionValue);
 	void Look(const FInputActionValue& InputActionValue);
 	void JumpStarted();
 	void JumpEnd();
+
+	/* Gameplay Actions */
+	void FireWeapon();
+	
 };

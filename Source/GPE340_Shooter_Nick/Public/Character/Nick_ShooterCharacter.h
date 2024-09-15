@@ -10,6 +10,8 @@
 class UCameraComponent;
 class USpringArmComponent;
 
+DECLARE_DELEGATE(FFireDelegate);
+
 UCLASS()
 class GPE340_SHOOTER_NICK_API ANick_ShooterCharacter : public ACharacter
 {
@@ -18,6 +20,8 @@ class GPE340_SHOOTER_NICK_API ANick_ShooterCharacter : public ACharacter
 public:
 	
 	ANick_ShooterCharacter();
+	
+	FFireDelegate OnFiredWeapon;
 
 protected:
 	
@@ -26,6 +30,9 @@ protected:
 public:	
 	
 	virtual void Tick(float DeltaTime) override;
+
+	/* Gameplay Actions */
+	void FireWeapon();
 
 private:
 

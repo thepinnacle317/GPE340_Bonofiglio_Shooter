@@ -4,7 +4,7 @@
 #include "GameCore/Nick_ShooterPlayerController.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "GameFramework/Character.h"
+#include "Character/Nick_ShooterCharacter.h"
 
 
 void ANick_ShooterPlayerController::BeginPlay()
@@ -22,17 +22,18 @@ void ANick_ShooterPlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 	UEnhancedInputComponent* ShooterInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
 	UE_LOG(LogTemp, Warning, TEXT("Input Component Setup."));
-	ShooterInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ANick_ShooterPlayerController::Move);
-	ShooterInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ANick_ShooterPlayerController::Look);
+	ShooterInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::Move);
+	ShooterInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ThisClass::Look);
 	ShooterInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ThisClass::JumpStarted);
 	ShooterInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ThisClass::JumpEnd);
+	ShooterInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &ThisClass::FireWeapon);
 
 }
 
 void ANick_ShooterPlayerController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-	PossessedCharacter = Cast<ACharacter>(InPawn);
+	PossessedCharacter = Cast<ANick_ShooterCharacter>(InPawn);
 }
 
 void ANick_ShooterPlayerController::Move(const FInputActionValue& InputActionValue)
@@ -85,4 +86,9 @@ void ANick_ShooterPlayerController::JumpEnd()
 	{
 		PossessedCharacter->StopJumping();
 	}
+}
+
+void ANick_ShooterPlayerController::FireWeapon()
+{
+	PossessedCharacter->OnFiredWeapon.ExecuteIfBound();
 }
