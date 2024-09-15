@@ -26,9 +26,11 @@ protected:
 	virtual void SetupInputComponent() override;
 	virtual void OnPossess(APawn* InPawn) override;
 
-private:
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Possessed Pawn")
 	TObjectPtr<ANick_ShooterCharacter> PossessedCharacter;
+
+private:
+	
 	/* Enhanced Input */
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<UInputMappingContext> ShooterIMC;
@@ -50,6 +52,8 @@ private:
 	void JumpEnd();
 
 	/* Gameplay Actions */
-	void FireWeapon();
+	void Fire();
+	void Aim();
+	void Interact();
 	
 };

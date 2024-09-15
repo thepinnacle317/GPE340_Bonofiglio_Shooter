@@ -12,6 +12,7 @@ class USpringArmComponent;
 class UAnimMontage;
 
 DECLARE_DELEGATE(FFireDelegate);
+DECLARE_DELEGATE(FAimDelegate);
 
 UCLASS()
 class GPE340_SHOOTER_NICK_API ANick_ShooterCharacter : public ACharacter
@@ -23,17 +24,21 @@ public:
 	ANick_ShooterCharacter();
 	
 	FFireDelegate OnFiredWeapon;
+	FAimDelegate OnAiming;
 
 protected:
 	
 	virtual void BeginPlay() override;
+	
+	/* Gameplay Actions */
+	void FireWeapon();
+	void Aim();
 
 public:	
 	
 	virtual void Tick(float DeltaTime) override;
 
-	/* Gameplay Actions */
-	void FireWeapon();
+	
 
 private:
 
@@ -47,6 +52,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> HipFireMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAnimMontage> AimMontage;
 	
 
 public:

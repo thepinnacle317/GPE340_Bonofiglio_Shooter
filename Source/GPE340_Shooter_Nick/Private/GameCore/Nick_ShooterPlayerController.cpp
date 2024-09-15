@@ -26,7 +26,8 @@ void ANick_ShooterPlayerController::SetupInputComponent()
 	ShooterInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ThisClass::Look);
 	ShooterInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ThisClass::JumpStarted);
 	ShooterInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ThisClass::JumpEnd);
-	ShooterInputComponent->BindAction(ShootAction, ETriggerEvent::Started, this, &ThisClass::FireWeapon);
+	ShooterInputComponent->BindAction(ShootAction, ETriggerEvent::Started, this, &ThisClass::Fire);
+	ShooterInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &ThisClass::Aim);
 
 }
 
@@ -88,7 +89,21 @@ void ANick_ShooterPlayerController::JumpEnd()
 	}
 }
 
-void ANick_ShooterPlayerController::FireWeapon()
+void ANick_ShooterPlayerController::Fire()
 {
 	PossessedCharacter->OnFiredWeapon.ExecuteIfBound();
+}
+
+void ANick_ShooterPlayerController::Aim()
+{
+	PossessedCharacter->OnAiming.ExecuteIfBound();
+	// Call delegate from character to make these changes.
+	UE_LOG(LogTemp, Warning, TEXT("Aiming"));
+	// TODO: Change FOV of Camera
+	// TODO: Play animation associated with the equipped weapon.  ie raise weapon (at ready state).
+	// Can decrease size of the reticle as well for more precise targeting.
+}
+
+void ANick_ShooterPlayerController::Interact()
+{
 }

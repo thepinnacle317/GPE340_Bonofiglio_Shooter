@@ -17,6 +17,8 @@ ANick_ShooterCharacter::ANick_ShooterCharacter()
 	CameraBoom->TargetArmLength = 300.f; // Camera Follow Distance
 	CameraBoom->bUsePawnControlRotation = true; // Rotate the boom based on the controller.
 
+	CameraBoom->SocketOffset = FVector(0.f, 100.f, 50.f);
+
 	/* Follow Camera */
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Follow Camera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);  // The default end location of the spring arm by socket.
@@ -24,7 +26,7 @@ ANick_ShooterCharacter::ANick_ShooterCharacter()
 
 	/* Do not rotate the character mesh when the controller rotates */ 
 	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
+	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = false;
 
 	/* Rotate the character to player input movement */
@@ -41,6 +43,7 @@ void ANick_ShooterCharacter::BeginPlay()
 	Super::BeginPlay();
 	// Can be substituted for a more generic delegate that can be bound based on actions.
 	OnFiredWeapon.BindUObject(this, &ANick_ShooterCharacter::FireWeapon);
+	OnAiming.BindUObject(this, &ANick_ShooterCharacter::Aim);
 	
 }
 
@@ -60,5 +63,17 @@ void ANick_ShooterCharacter::FireWeapon()
 		AnimInstance->Montage_Play(HipFireMontage);
 		AnimInstance->Montage_JumpToSection(FName("StartFire"));
 	}
+}
+
+void ANick_ShooterCharacter::Aim()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && AimMontage)
+	{
+		AnimInstance->Montage_Play(AimMontage);
+		AnimInstance->Montage_JumpToSection(FName("StartAim"));
+	}
+
+	// Do stuff with the reticle and zoom FOV here.
 }
 
