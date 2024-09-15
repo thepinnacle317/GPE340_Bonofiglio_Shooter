@@ -1,0 +1,9 @@
+***Weapon Component***
+Used to store a reference to who is holding it
+Holds functions for firing, reloading, and data for attributes
+
+
+***Character Component***
+Holds a reference to the currently held actor
+Will hold all the animations for properties
+Character Attributes

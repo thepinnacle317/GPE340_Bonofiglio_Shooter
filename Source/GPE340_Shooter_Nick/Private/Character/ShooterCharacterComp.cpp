@@ -3,6 +3,9 @@
 
 #include "Character/ShooterCharacterComp.h"
 
+#include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystemComponent.h"
+
 // Sets default values for this component's properties
 UShooterCharacterComp::UShooterCharacterComp()
 {
@@ -13,7 +16,69 @@ UShooterCharacterComp::UShooterCharacterComp()
 void UShooterCharacterComp::BeginPlay()
 {
 	Super::BeginPlay();
+
+	OnCrosshairTrace.BindUObject(this, &UShooterCharacterComp::CrosshairTrace);
+}
+
+void UShooterCharacterComp::CrosshairTrace()
+{
+	// Get the current size of the viewport
+	FVector2D ViewportSize;
+	if (GEngine && GEngine->GameViewport)
+	{
+		GEngine->GameViewport->GetViewportSize(ViewportSize);
+	}
+
+	// Get the center of the screen.
+	FVector2D CrosshairLocation(ViewportSize.X / 2.f, ViewportSize.Y / 2.f);
 	
+	CrosshairLocation.Y -= 50.f; // Move the crosshair up 50 units on the screen.
+	
+	FVector CrosshairWorldPosition;
+	FVector CrosshairWorldDirection;
+
+	// Transforms the given 2D screen space coordinate into a 3D world-space point and direction.
+	bool bScreenToWorld = UGameplayStatics::DeprojectScreenToWorld(UGameplayStatics::GetPlayerController(GetOwner(), 0),
+		CrosshairLocation, CrosshairWorldPosition, CrosshairWorldDirection);
+
+	// Was the deprojection successful
+	if (bScreenToWorld)
+	{
+		FHitResult ScreenTraceHit;
+		const FVector Start{CrosshairWorldPosition};
+		const FVector End{CrosshairWorldPosition + CrosshairWorldDirection * CrosshairTraceLength};
+
+		// Set Beam end location for particle effects if no hit.
+		VaporEndPoint = End;
+
+		// Perform Line Trace From Crosshair.
+		GetWorld()->LineTraceSingleByChannel(ScreenTraceHit, Start, End, ECC_Visibility);
+
+		/* Spawn Impact Particles */
+		if (ScreenTraceHit.bBlockingHit)
+		{
+			/* End the beam particle where the blocking hit was */
+			VaporEndPoint = ScreenTraceHit.Location;
+			
+			/* Spawn the impact particles where the blocking hit was */
+			 if (ImpactFX)
+			 {
+			 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactFX, ScreenTraceHit.Location);
+			 }
+		}
+		
+		/* Spawn the Beam Vapor Trail */
+		if (VaporTrail)
+		{
+			UParticleSystemComponent* VaporBeam = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), VaporTrail, SocketTransform);
+			
+			if (VaporBeam)
+			{
+				// End the beam based on the vector and parameter value.
+				VaporBeam->SetVectorParameter(FName("Target"), VaporEndPoint);
+			}
+		}
+	}
 }
 
 void UShooterCharacterComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

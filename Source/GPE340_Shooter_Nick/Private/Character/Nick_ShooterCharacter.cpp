@@ -3,6 +3,8 @@
 
 #include "Character/Nick_ShooterCharacter.h"
 #include "Camera/CameraComponent.h"
+#include "Character/ShooterCharacterComp.h"
+#include "Engine/SkeletalMeshSocket.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
@@ -36,6 +38,8 @@ ANick_ShooterCharacter::ANick_ShooterCharacter()
 	GetCharacterMovement()->JumpZVelocity = 650.f;
 	GetCharacterMovement()->AirControl = .4f; // Control of the character while in the air.
 
+	ShooterCharacterComp = CreateDefaultSubobject<UShooterCharacterComp>(TEXT("Shooter Character Component"));
+
 }
 
 void ANick_ShooterCharacter::BeginPlay()
@@ -45,6 +49,16 @@ void ANick_ShooterCharacter::BeginPlay()
 	OnFiredWeapon.BindUObject(this, &ANick_ShooterCharacter::FireWeapon);
 	OnAiming.BindUObject(this, &ANick_ShooterCharacter::Aim);
 	
+	
+}
+
+void ANick_ShooterCharacter::SetWeaponSocketTransform()
+{
+	const USkeletalMeshSocket* BarrelSocket = GetMesh()->GetSocketByName("BarrelSocket");
+	if (BarrelSocket)
+	{
+		ShooterCharacterComp->SocketTransform = BarrelSocket->GetSocketTransform(GetMesh());
+	}
 }
 
 void ANick_ShooterCharacter::Tick(float DeltaTime)
@@ -56,12 +70,14 @@ void ANick_ShooterCharacter::Tick(float DeltaTime)
 void ANick_ShooterCharacter::FireWeapon()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Fire Weapon"));
+	SetWeaponSocketTransform();
 
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance && HipFireMontage)
 	{
 		AnimInstance->Montage_Play(HipFireMontage);
 		AnimInstance->Montage_JumpToSection(FName("StartFire"));
+		ShooterCharacterComp->OnCrosshairTrace.ExecuteIfBound();
 	}
 }
 

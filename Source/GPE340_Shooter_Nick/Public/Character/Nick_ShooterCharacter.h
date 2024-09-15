@@ -6,7 +6,9 @@
 #include "GameFramework/Character.h"
 #include "Nick_ShooterCharacter.generated.h"
 
+
 /* Forward Declarations */
+class UShooterCharacterComp;
 class UCameraComponent;
 class USpringArmComponent;
 class UAnimMontage;
@@ -22,23 +24,21 @@ class GPE340_SHOOTER_NICK_API ANick_ShooterCharacter : public ACharacter
 public:
 	
 	ANick_ShooterCharacter();
-	
+	virtual void Tick(float DeltaTime) override;
+
+	/* Delegate Handles */
 	FFireDelegate OnFiredWeapon;
 	FAimDelegate OnAiming;
 
 protected:
 	
 	virtual void BeginPlay() override;
+
+	void SetWeaponSocketTransform();
 	
 	/* Gameplay Actions */
 	void FireWeapon();
 	void Aim();
-
-public:	
-	
-	virtual void Tick(float DeltaTime) override;
-
-	
 
 private:
 
@@ -50,11 +50,17 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> FollowCamera;
 
+	/* Hipfire Montage */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> HipFireMontage;
 
+	/* Aim Montage */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> AimMontage;
+
+	/* Component that holds essential functionality to character gameplay */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UShooterCharacterComp> ShooterCharacterComp;
 	
 
 public:
