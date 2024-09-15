@@ -24,11 +24,11 @@ ANick_ShooterCharacter::ANick_ShooterCharacter()
 	/* Follow Camera */
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Follow Camera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);  // The default end location of the spring arm by socket.
-	FollowCamera->bUsePawnControlRotation = false; // Set camera to false so it only follows the boom.
+	FollowCamera->bUsePawnControlRotation = false; // Set camera to false, so it only follows the boom.
 
 	/* Do not rotate the character mesh when the controller rotates */ 
 	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = true;
+	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
 	/* Rotate the character to player input movement */

@@ -71,4 +71,6 @@ public:
 	/* Returns Follow Camera Subobject */
 	FORCEINLINE TObjectPtr<UCameraComponent> GetFollowCamera() const { return FollowCamera; }
 
+	FORCEINLINE TObjectPtr<UShooterCharacterComp> GetShooterComp() const { return ShooterCharacterComp; }
+
 };

@@ -25,13 +25,20 @@ public:
 	
 	FCrosshairDelegate OnCrosshairTrace;
 
-	
+	/* Directional Dodge Montage */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Movement", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAnimMontage> DodgeMontage;
+
+	/* Dive Montage */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Movement", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAnimMontage> DiveMontage;
 
 protected:
 
 	virtual void BeginPlay() override;
 	void CrosshairTrace();
 
+	
 	
 
 public:	
@@ -45,9 +52,10 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat Properties | VFX", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UParticleSystem> ImpactFX;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Combat Properties", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Combat Properties | VFX", meta = (AllowPrivateAccess = "true"))
 	FVector VaporEndPoint;
 
+	
 	
 
 public:

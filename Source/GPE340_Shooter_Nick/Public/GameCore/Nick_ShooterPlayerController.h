@@ -21,10 +21,19 @@ class GPE340_SHOOTER_NICK_API ANick_ShooterPlayerController : public APlayerCont
 {
 	GENERATED_BODY()
 
+public:
+
+	UPROPERTY(BlueprintReadOnly)
+	float Forward_Backward;
+	
+	UPROPERTY(BlueprintReadOnly)
+	float Left_Right;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 	virtual void OnPossess(APawn* InPawn) override;
+	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Possessed Pawn")
 	TObjectPtr<ANick_ShooterCharacter> PossessedCharacter;
@@ -44,12 +53,17 @@ private:
 	TObjectPtr<UInputAction> ShootAction;
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<UInputAction> AimAction;
+	UPROPERTY(EditAnywhere, Category="Input")
+	TObjectPtr<UInputAction> DodgeAction;
 
 	/* Movement */
 	void Move(const FInputActionValue& InputActionValue);
+	void MoveCompleted();
 	void Look(const FInputActionValue& InputActionValue);
 	void JumpStarted();
 	void JumpEnd();
+	void Dodge();
+	FName GetDirectionalDodgeSection();
 
 	/* Gameplay Actions */
 	void Fire();

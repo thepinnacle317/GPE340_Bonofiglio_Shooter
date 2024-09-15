@@ -5,6 +5,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Character/Nick_ShooterCharacter.h"
+#include "Character/ShooterCharacterComp.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 
 void ANick_ShooterPlayerController::BeginPlay()
@@ -23,11 +25,13 @@ void ANick_ShooterPlayerController::SetupInputComponent()
 	UEnhancedInputComponent* ShooterInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
 	UE_LOG(LogTemp, Warning, TEXT("Input Component Setup."));
 	ShooterInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::Move);
+	ShooterInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this, &ThisClass::MoveCompleted);
 	ShooterInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ThisClass::Look);
 	ShooterInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ThisClass::JumpStarted);
 	ShooterInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ThisClass::JumpEnd);
 	ShooterInputComponent->BindAction(ShootAction, ETriggerEvent::Started, this, &ThisClass::Fire);
 	ShooterInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &ThisClass::Aim);
+	ShooterInputComponent->BindAction(DodgeAction, ETriggerEvent::Triggered, this, &ThisClass::Dodge);
 
 }
 
@@ -40,7 +44,7 @@ void ANick_ShooterPlayerController::OnPossess(APawn* InPawn)
 void ANick_ShooterPlayerController::Move(const FInputActionValue& InputActionValue)
 {
 	// input is a Vector2D
-	FVector2D MovementVector = InputActionValue.Get<FVector2D>();
+	const FVector2D MovementVector = InputActionValue.Get<FVector2D>();
 
 	if (APawn* ControlledPawn = GetPawn<APawn>())
 	{
@@ -56,8 +60,16 @@ void ANick_ShooterPlayerController::Move(const FInputActionValue& InputActionVal
 
 		// add movement 
 		ControlledPawn->AddMovementInput(ForwardDirection, MovementVector.Y);
+		Forward_Backward = MovementVector.Y;
 		ControlledPawn->AddMovementInput(RightDirection, MovementVector.X);
+		Left_Right = MovementVector.X;
 	}
+}
+
+void ANick_ShooterPlayerController::MoveCompleted()
+{
+	Forward_Backward = 0.f;
+	Left_Right = 0.f;
 }
 
 void ANick_ShooterPlayerController::Look(const FInputActionValue& InputActionValue)
@@ -88,6 +100,57 @@ void ANick_ShooterPlayerController::JumpEnd()
 		PossessedCharacter->StopJumping();
 	}
 }
+
+void ANick_ShooterPlayerController::Dodge()
+{
+	/* Get the anim instance from the possesesed character so we can play a montage */
+	UAnimInstance* AnimInstance = PossessedCharacter->GetMesh()->GetAnimInstance();
+	if (AnimInstance)
+	{
+		UAnimMontage* SelectedDodge;
+		if (PossessedCharacter->GetCharacterMovement()->bOrientRotationToMovement)
+		{
+			SelectedDodge = PossessedCharacter->GetShooterComp()->DiveMontage;				
+		}
+		else
+		{
+			SelectedDodge = PossessedCharacter->GetShooterComp()->DodgeMontage;
+		}
+		
+		AnimInstance->Montage_Play(SelectedDodge);
+		// Jump to the section of the montage that will be determined by input value and switch to the correct case.
+		if (!PossessedCharacter->GetCharacterMovement()->bOrientRotationToMovement)
+		{
+			AnimInstance->Montage_JumpToSection(GetDirectionalDodgeSection());
+		}
+	}
+}
+
+FName ANick_ShooterPlayerController::GetDirectionalDodgeSection()
+{
+	FName MontageSection;
+	int32 SelectIndex = FMath::TruncToInt(Forward_Backward * 2.f + Left_Right) + 2;
+	switch (SelectIndex)
+	{
+	case 0:
+		MontageSection = FName("BWD");
+		break;
+	case 1:
+		MontageSection = FName("LEFT");
+		break;
+	case 2:
+		MontageSection = FName("FWD");
+		break;
+	case 3:
+		MontageSection = FName("RIGHT");
+		break;
+	case 4:
+		MontageSection = FName("FWD");
+		break;
+	}
+	return MontageSection;
+}
+
 
 void ANick_ShooterPlayerController::Fire()
 {
