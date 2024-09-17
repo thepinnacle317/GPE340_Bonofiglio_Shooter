@@ -9,8 +9,10 @@
 UShooterCharacterComp::UShooterCharacterComp() :
 	/* Initialize Values : Put these in order by initialization */
 	DefaultCameraFOV(90.f),
-	AimingCameraFOV(60.f),
-	bIsAiming(false)
+	AimingCameraFOV(40.f),
+	bIsAiming(false),
+	CurrentCameraFOV(0.f),
+	AimInterpSpeed(20.f)
 {
 	PrimaryComponentTick.bCanEverTick = false;
 	
@@ -21,6 +23,8 @@ void UShooterCharacterComp::BeginPlay()
 	Super::BeginPlay();
 
 	OnCrosshairTrace.BindUObject(this, &UShooterCharacterComp::CrosshairTrace);
+
+	CurrentCameraFOV = DefaultCameraFOV;
 }
 
 void UShooterCharacterComp::CrosshairTrace()
@@ -111,6 +115,11 @@ void UShooterCharacterComp::SetbIsAiming(bool Value)
 void UShooterCharacterComp::SetSocketTransform(const FTransform& Value)
 {
 	SocketTransform = Value;
+}
+
+void UShooterCharacterComp::SetCurrentCameraFOV(float Value)
+{
+	CurrentCameraFOV = Value;
 }
 
 void UShooterCharacterComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

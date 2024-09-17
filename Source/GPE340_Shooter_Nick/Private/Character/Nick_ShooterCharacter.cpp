@@ -16,10 +16,10 @@ ANick_ShooterCharacter::ANick_ShooterCharacter()
 	// Create and define the camera boom. (Pulls in toward character when colliding).
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("Camera Boom"));
 	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->TargetArmLength = 300.f; // Camera Follow Distance
+	CameraBoom->TargetArmLength = 200.f; // Camera Follow Distance
 	CameraBoom->bUsePawnControlRotation = true; // Rotate the boom based on the controller.
 
-	CameraBoom->SocketOffset = FVector(0.f, 100.f, 50.f);
+	CameraBoom->SocketOffset = FVector(0.f, 50.f, 70.f);
 
 	/* Follow Camera */
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Follow Camera"));
@@ -53,7 +53,15 @@ void ANick_ShooterCharacter::BeginPlay()
 	FollowCamera->FieldOfView = ShooterCharacterComp->DefaultCameraFOV;
 }
 
-void ANick_ShooterCharacter::SetWeaponSocketTransform()
+void ANick_ShooterCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	/* Smoothly switch between the aiming and default FOV */
+	InterpolateCameraFOV(DeltaTime);
+}
+
+void ANick_ShooterCharacter::SetWeaponSocketTransform() const
 {
 	const USkeletalMeshSocket* BarrelSocket = GetMesh()->GetSocketByName("BarrelSocket");
 	if (BarrelSocket)
@@ -62,21 +70,15 @@ void ANick_ShooterCharacter::SetWeaponSocketTransform()
 	}
 }
 
-void ANick_ShooterCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
 void ANick_ShooterCharacter::FireWeapon()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Fire Weapon"));
 	SetWeaponSocketTransform();
 
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance && HipFireMontage)
+	if (AnimInstance && ShooterCharacterComp->HipFireMontage)
 	{
-		AnimInstance->Montage_Play(HipFireMontage);
+		AnimInstance->Montage_Play(ShooterCharacterComp->HipFireMontage);
 		AnimInstance->Montage_JumpToSection(FName("StartFire"));
 		ShooterCharacterComp->OnCrosshairTrace.ExecuteIfBound();
 	}
@@ -84,14 +86,24 @@ void ANick_ShooterCharacter::FireWeapon()
 
 void ANick_ShooterCharacter::Aim()
 {
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance && AimMontage)
-	{
-		AnimInstance->Montage_Play(AimMontage);
-		AnimInstance->Montage_JumpToSection(FName("StartAim"));
-	}
-	
-	// TODO: Play animation associated with the equipped weapon.  ie raise weapon (at ready state).
 	// Can decrease size of the reticle as well for more precise targeting.
+}
+
+void ANick_ShooterCharacter::InterpolateCameraFOV(float DeltaTime)
+{
+	if (ShooterCharacterComp->GetbIsAiming())
+	{
+		/* Aiming : Interpolate to the Aiming FOV value */
+		ShooterCharacterComp->SetCurrentCameraFOV(FMath::FInterpTo(ShooterCharacterComp->GetCurrentCameraFOV(),
+			ShooterCharacterComp->AimingCameraFOV, DeltaTime, ShooterCharacterComp->AimInterpSpeed));
+	}
+	else
+	{
+		/* Not Aiming : Interpolate to the Default FOV value */
+		ShooterCharacterComp->SetCurrentCameraFOV(FMath::FInterpTo(ShooterCharacterComp->GetCurrentCameraFOV(),
+			ShooterCharacterComp->DefaultCameraFOV, DeltaTime, ShooterCharacterComp->AimInterpSpeed));
+	}
+	/* Set the Cameras FOV Value */
+	GetFollowCamera()->SetFieldOfView(ShooterCharacterComp->GetCurrentCameraFOV());
 }
 

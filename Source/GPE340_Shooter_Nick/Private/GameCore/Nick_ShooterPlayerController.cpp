@@ -167,18 +167,13 @@ void ANick_ShooterPlayerController::AimStarted()
 	/* Delegate is used here to make a call so that we handle all the animation and camera work in the
 	 * character method and not pollute the controller */
 	PossessedCharacter->OnAiming.ExecuteIfBound();
-	/* Set the CameraFOV to the value for when we are aiming */
-	PossessedCharacter->GetFollowCamera()->SetFieldOfView(PossessedCharacter->GetShooterComp()->AimingCameraFOV);
 	
 	UE_LOG(LogTemp, Warning, TEXT("Aiming"));
-	
 }
 
 void ANick_ShooterPlayerController::AimCompleted()
 {
 	PossessedCharacter->GetShooterComp()->SetbIsAiming(false);
-	/* Set the CameraFOV back to the default value */
-	PossessedCharacter->GetFollowCamera()->SetFieldOfView(PossessedCharacter->GetShooterComp()->DefaultCameraFOV);
 }
 
 void ANick_ShooterPlayerController::Interact()

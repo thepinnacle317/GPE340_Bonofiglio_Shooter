@@ -28,6 +28,9 @@ public:
 	/* Used to set the transform of the weapon barrel socket. This is called in Nick_ShooterCharacter */
 	void SetSocketTransform(const FTransform& Value);
 
+	/* Used to set the value of the Current Camera FOV for when we are interping between values. */
+	void SetCurrentCameraFOV(float Value);
+
 	/* * * Delegate Handles * * */
 	FCrosshairDelegate OnCrosshairTrace;
 
@@ -39,9 +42,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Shooter Core | Movement")
 	TObjectPtr<UAnimMontage> DiveMontage;
 
-	/* Aim Montage */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Shooter Core | Movement")
-	TObjectPtr<UAnimMontage> AimMontage;
+	/* Hipfire Montage */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAnimMontage> HipFireMontage;
 
 	/* Bullet Trace particle effects */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Shooter Core | Combat Properties | VFX")
@@ -51,10 +54,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Shooter Core | Combat Properties | VFX")
 	TObjectPtr<UParticleSystem> ImpactFX;
 
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Shooter Core | Camera Properties | FOV")
 	float DefaultCameraFOV;
+
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Shooter Core | Camera Properties | FOV")
 	float AimingCameraFOV;
+	
+	/* Speed at which the FOV with smoothly transition between values */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Shooter Core | Camera Properties | FOV")
+	float AimInterpSpeed;
 
 protected:
 	virtual void BeginPlay() override;
@@ -74,14 +84,16 @@ private:
 
 	/* This is set in the character through SetWeaponSocketTransform for the barrelsocket location.
 	 * TODO: Update once there is a pickup and item system. */
-	UPROPERTY()
 	FTransform SocketTransform;
-	
+
+	/* Current Frames Camer FOV */
+	float CurrentCameraFOV;
 
 public:
 	/* The compiler will ultimately determine if these getters will be Inline or not */
 	FORCEINLINE FTransform GetSocketTransform() const { return SocketTransform; }
 	FORCEINLINE bool GetbIsAiming() const { return bIsAiming; }
+	FORCEINLINE float GetCurrentCameraFOV() const { return CurrentCameraFOV; }
 
 	
 		

@@ -34,11 +34,13 @@ protected:
 	
 	virtual void BeginPlay() override;
 
-	void SetWeaponSocketTransform();
+	void SetWeaponSocketTransform() const;
 	
 	/* Gameplay Actions */
 	void FireWeapon();
 	void Aim();
+
+	void InterpolateCameraFOV(float DeltaTime);
 
 private:
 
@@ -49,14 +51,6 @@ private:
 	/* Camera that follows the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> FollowCamera;
-
-	/* Hipfire Montage */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAnimMontage> HipFireMontage;
-
-	/* Aim Montage */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAnimMontage> AimMontage;
 
 	/* Component that holds essential functionality to character gameplay */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"))
