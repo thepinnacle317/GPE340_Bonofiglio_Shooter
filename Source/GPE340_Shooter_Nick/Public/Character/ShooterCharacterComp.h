@@ -72,6 +72,24 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Shooter Core | Movement | Speed")
 	float AimingCharacterSpeed;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Shooter Core | Movement | Aiming")
+	float BaseLookUpRate;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Shooter Core | Movement | Aiming")
+	float BaseTurnRate;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Shooter Core | Movement | Aiming")
+	float AtReadyTurnRate;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Shooter Core | Movement | Aiming")
+	float AtReadyLookUpRate;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Shooter Core | Movement | Aiming")
+	float AimingTurnRate;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Shooter Core | Movement | Aiming")
+	float AimingLookUpRate;
+
 protected:
 	virtual void BeginPlay() override;
 

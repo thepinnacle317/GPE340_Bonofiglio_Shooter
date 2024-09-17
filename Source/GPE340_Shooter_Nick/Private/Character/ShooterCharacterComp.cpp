@@ -7,14 +7,23 @@
 
 // Sets default values for this component's properties
 UShooterCharacterComp::UShooterCharacterComp() :
-	/* Member Initializer List : Put these in order by initialization */
+/* Member Initializer List : Put these in order by initialization */
+	/* Camera FOV Values */
 	DefaultCameraFOV(90.f),
 	AimingCameraFOV(40.f),
 	AimInterpSpeed(20.f),
+	/* Character Speed Values */
 	DefaultCharacterSpeed(600.f),
 	AimingCharacterSpeed(350),
 	bIsAiming(false),
-	CurrentCameraFOV(0.f)
+	CurrentCameraFOV(0.f),
+	/* Aim Sensitivity */
+	BaseLookUpRate(45.f),
+	BaseTurnRate(45.f),
+	AtReadyTurnRate(90.f),
+	AtReadyLookUpRate(90.f),
+	AimingTurnRate(25.f),
+	AimingLookUpRate(25.f)
 {
 	PrimaryComponentTick.bCanEverTick = false;
 	

@@ -58,8 +58,10 @@ private:
 
 	/* Movement */
 	void Move(const FInputActionValue& InputActionValue);
-	void MoveCompleted();
 	void Look(const FInputActionValue& InputActionValue);
+	void MoveCompleted();
+	void LookUp(float Rate);
+	void Turn(float Rate);
 	void JumpStarted();
 	void JumpEnd();
 	void Dodge();

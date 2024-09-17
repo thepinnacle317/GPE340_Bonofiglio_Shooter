@@ -75,17 +75,26 @@ void ANick_ShooterPlayerController::MoveCompleted()
 	Left_Right = 0.f;
 }
 
+void ANick_ShooterPlayerController::LookUp(float Rate)
+{
+	PossessedCharacter->AddControllerPitchInput(Rate * PossessedCharacter->GetShooterComp()->BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+}
+
+void ANick_ShooterPlayerController::Turn(float Rate)
+{
+	PossessedCharacter->AddControllerYawInput(Rate * PossessedCharacter->GetShooterComp()->BaseTurnRate * GetWorld()->GetDeltaSeconds());
+}
+
 void ANick_ShooterPlayerController::Look(const FInputActionValue& InputActionValue)
 {
 	// input is a Vector2D
 	FVector2D LookAxisVector = InputActionValue.Get<FVector2D>();
 
-	if (APawn* ControlledPawn = GetPawn<APawn>())
-	{
-		// add yaw and pitch input to controller
-		ControlledPawn->AddControllerYawInput(LookAxisVector.X);
-		ControlledPawn->AddControllerPitchInput(LookAxisVector.Y);
-	}
+	// add yaw and pitch input to controller
+	//ControlledPawn->AddControllerYawInput(LookAxisVector.X);
+	//ControlledPawn->AddControllerPitchInput(LookAxisVector.Y);
+	PossessedCharacter->AddControllerPitchInput(LookAxisVector.Y * PossessedCharacter->GetShooterComp()->BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+	PossessedCharacter->AddControllerYawInput(LookAxisVector.X * PossessedCharacter->GetShooterComp()->BaseTurnRate * GetWorld()->GetDeltaSeconds());
 }
 
 void ANick_ShooterPlayerController::JumpStarted()
