@@ -35,15 +35,15 @@ public:
 	FCrosshairDelegate OnCrosshairTrace;
 
 	/* Directional Dodge Montage */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Shooter Core | Movement")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Shooter Core | Movement | Animation")
 	TObjectPtr<UAnimMontage> DodgeMontage;
 
 	/* Dive Montage */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Shooter Core | Movement")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Shooter Core | Movement | Animation")
 	TObjectPtr<UAnimMontage> DiveMontage;
 
 	/* Hipfire Montage */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Combat", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Shooter Core | Movement | Animation", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAnimMontage> HipFireMontage;
 
 	/* Bullet Trace particle effects */
@@ -65,6 +65,12 @@ public:
 	/* Speed at which the FOV with smoothly transition between values */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Shooter Core | Camera Properties | FOV")
 	float AimInterpSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Shooter Core | Movement | Speed")
+	float DefaultCharacterSpeed;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Shooter Core | Movement | Speed")
+	float AimingCharacterSpeed;
 
 protected:
 	virtual void BeginPlay() override;

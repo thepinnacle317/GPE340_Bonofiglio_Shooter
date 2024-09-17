@@ -3,6 +3,7 @@
 
 #include "Character/ShooterAnimInstance.h"
 #include "Character/Nick_ShooterCharacter.h"
+#include "Character/ShooterCharacterComp.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -46,6 +47,8 @@ void UShooterAnimInstance::UpdateAnimationProperties(float DeltaTime)
 		{
 			LastFrameOffsetYaw = ShooterMovementOffsetYaw;
 		}
+
+		bAiming = ShooterCharacter->GetShooterComp()->GetbIsAiming();
 	}
 }
 

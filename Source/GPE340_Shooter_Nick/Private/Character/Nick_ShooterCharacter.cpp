@@ -8,7 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
-// Sets default values
+
 ANick_ShooterCharacter::ANick_ShooterCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -37,7 +37,8 @@ ANick_ShooterCharacter::ANick_ShooterCharacter()
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);
 	GetCharacterMovement()->JumpZVelocity = 650.f;
 	GetCharacterMovement()->AirControl = .4f; // Control of the character while in the air.
-
+	
+	
 	ShooterCharacterComp = CreateDefaultSubobject<UShooterCharacterComp>(TEXT("Shooter Character Component"));
 
 }
@@ -51,6 +52,7 @@ void ANick_ShooterCharacter::BeginPlay()
 	
 	/* Set the Camera FOV to the value assigned in the shooter Comp */
 	FollowCamera->FieldOfView = ShooterCharacterComp->DefaultCameraFOV;
+	GetCharacterMovement()->MaxWalkSpeed = ShooterCharacterComp->DefaultCharacterSpeed;
 }
 
 void ANick_ShooterCharacter::Tick(float DeltaTime)

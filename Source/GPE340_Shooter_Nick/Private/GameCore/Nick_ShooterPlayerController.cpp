@@ -162,7 +162,11 @@ void ANick_ShooterPlayerController::Fire()
 
 void ANick_ShooterPlayerController::AimStarted()
 {
+	/* Set Aim Value to True */
 	PossessedCharacter->GetShooterComp()->SetbIsAiming(true);
+
+	/* Set Character Walk Speed While Aiming */
+	PossessedCharacter->GetCharacterMovement()->MaxWalkSpeed = PossessedCharacter->GetShooterComp()->AimingCharacterSpeed;
 
 	/* Delegate is used here to make a call so that we handle all the animation and camera work in the
 	 * character method and not pollute the controller */
@@ -174,6 +178,8 @@ void ANick_ShooterPlayerController::AimStarted()
 void ANick_ShooterPlayerController::AimCompleted()
 {
 	PossessedCharacter->GetShooterComp()->SetbIsAiming(false);
+	/* Set Character Walk Speed While Aiming */
+	PossessedCharacter->GetCharacterMovement()->MaxWalkSpeed = PossessedCharacter->GetShooterComp()->DefaultCharacterSpeed;
 }
 
 void ANick_ShooterPlayerController::Interact()

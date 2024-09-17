@@ -7,12 +7,14 @@
 
 // Sets default values for this component's properties
 UShooterCharacterComp::UShooterCharacterComp() :
-	/* Initialize Values : Put these in order by initialization */
+	/* Member Initializer List : Put these in order by initialization */
 	DefaultCameraFOV(90.f),
 	AimingCameraFOV(40.f),
+	AimInterpSpeed(20.f),
+	DefaultCharacterSpeed(600.f),
+	AimingCharacterSpeed(350),
 	bIsAiming(false),
-	CurrentCameraFOV(0.f),
-	AimInterpSpeed(20.f)
+	CurrentCameraFOV(0.f)
 {
 	PrimaryComponentTick.bCanEverTick = false;
 	
@@ -25,6 +27,7 @@ void UShooterCharacterComp::BeginPlay()
 	OnCrosshairTrace.BindUObject(this, &UShooterCharacterComp::CrosshairTrace);
 
 	CurrentCameraFOV = DefaultCameraFOV;
+	
 }
 
 void UShooterCharacterComp::CrosshairTrace()
