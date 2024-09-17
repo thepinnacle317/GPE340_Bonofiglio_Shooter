@@ -172,7 +172,7 @@ void ANick_ShooterPlayerController::AimStarted()
 	 * character method and not pollute the controller */
 	PossessedCharacter->OnAiming.ExecuteIfBound();
 	
-	UE_LOG(LogTemp, Warning, TEXT("Aiming"));
+	//UE_LOG(LogTemp, Warning, TEXT("Aiming"));
 }
 
 void ANick_ShooterPlayerController::AimCompleted()

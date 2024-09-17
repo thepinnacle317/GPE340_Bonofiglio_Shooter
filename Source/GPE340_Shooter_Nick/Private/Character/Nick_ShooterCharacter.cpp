@@ -38,9 +38,7 @@ ANick_ShooterCharacter::ANick_ShooterCharacter()
 	GetCharacterMovement()->JumpZVelocity = 650.f;
 	GetCharacterMovement()->AirControl = .4f; // Control of the character while in the air.
 	
-	
 	ShooterCharacterComp = CreateDefaultSubobject<UShooterCharacterComp>(TEXT("Shooter Character Component"));
-
 }
 
 void ANick_ShooterCharacter::BeginPlay()
@@ -52,6 +50,8 @@ void ANick_ShooterCharacter::BeginPlay()
 	
 	/* Set the Camera FOV to the value assigned in the shooter Comp */
 	FollowCamera->FieldOfView = ShooterCharacterComp->DefaultCameraFOV;
+	
+	/* Set the character movement component to the value assigned in the shooter component */
 	GetCharacterMovement()->MaxWalkSpeed = ShooterCharacterComp->DefaultCharacterSpeed;
 }
 
@@ -61,6 +61,7 @@ void ANick_ShooterCharacter::Tick(float DeltaTime)
 
 	/* Smoothly switch between the aiming and default FOV */
 	InterpolateCameraFOV(DeltaTime);
+
 }
 
 void ANick_ShooterCharacter::SetWeaponSocketTransform() const
