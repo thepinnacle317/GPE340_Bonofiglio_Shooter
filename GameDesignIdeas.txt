@@ -7,3 +7,4 @@ Holds functions for firing, reloading, and data for attributes
 Holds a reference to the currently held actor
 Will hold all the animations for properties
 Character Attributes
+- this component will only hold values and methods that do not require casting to reference the games specific character.  

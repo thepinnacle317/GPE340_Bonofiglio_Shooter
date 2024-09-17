@@ -4,6 +4,7 @@
 #include "Character/ShooterAnimInstance.h"
 #include "Character/Nick_ShooterCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 void UShooterAnimInstance::UpdateAnimationProperties(float DeltaTime)
 {
@@ -31,6 +32,19 @@ void UShooterAnimInstance::UpdateAnimationProperties(float DeltaTime)
 		else
 		{
 			bIsMoving = false;
+		}
+
+		FRotator ShooterAimRotation = ShooterCharacter->GetBaseAimRotation();
+		FRotator ShooterMovementRotation = UKismetMathLibrary::MakeRotFromX(ShooterCharacter->GetVelocity());
+
+		/* Returns a Rotator and we only need the Yaw */
+		ShooterMovementOffsetYaw = UKismetMathLibrary::NormalizedDeltaRotator(ShooterMovementRotation, ShooterAimRotation).Yaw;
+
+		/* If the character is moving then update the last frame offset yaw to determine the delta so we play
+		 * the right stop animation */
+		if (ShooterCharacter->GetVelocity().Size() > 0.f)
+		{
+			LastFrameOffsetYaw = ShooterMovementOffsetYaw;
 		}
 	}
 }

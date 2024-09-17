@@ -67,7 +67,8 @@ private:
 
 	/* Gameplay Actions */
 	void Fire();
-	void Aim();
+	void AimStarted();
+	void AimCompleted();
 	void Interact();
 	
 };

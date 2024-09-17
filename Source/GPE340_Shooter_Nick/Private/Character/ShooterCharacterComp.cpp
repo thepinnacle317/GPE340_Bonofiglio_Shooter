@@ -2,14 +2,17 @@
 
 
 #include "Character/ShooterCharacterComp.h"
-
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
 
 // Sets default values for this component's properties
-UShooterCharacterComp::UShooterCharacterComp()
+UShooterCharacterComp::UShooterCharacterComp() :
+	/* Initialize Values : Put these in order by initialization */
+	DefaultCameraFOV(90.f),
+	AimingCameraFOV(60.f),
+	bIsAiming(false)
 {
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 	
 }
 
@@ -59,19 +62,14 @@ void UShooterCharacterComp::CrosshairTrace()
 		{
 			/* End the beam particle where the blocking hit was */
 			VaporEndPoint = ScreenTraceHit.Location;
-			
-			/* Spawn the impact particles where the blocking hit was */
-			 if (ImpactFX)
-			 {
-			 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactFX, ScreenTraceHit.Location);
-			 }
 		}
+
+		WeaponTrace();
 		
 		/* Spawn the Beam Vapor Trail */
 		if (VaporTrail)
 		{
 			UParticleSystemComponent* VaporBeam = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), VaporTrail, SocketTransform);
-			
 			if (VaporBeam)
 			{
 				// End the beam based on the vector and parameter value.
@@ -79,6 +77,40 @@ void UShooterCharacterComp::CrosshairTrace()
 			}
 		}
 	}
+}
+
+/** Perform a trace from the weapon's muzzle to the
+ * end hit location of the crosshair to check for obstructing objects.
+ */
+void UShooterCharacterComp::WeaponTrace()
+{
+	/*** Line Trace from Gun Barrel ***/
+	FHitResult WeaponResults;
+	const FVector WeaponTraceStart{ SocketTransform.GetLocation() };
+	const FVector WeaponTraceEnd{ VaporEndPoint };
+	GetWorld()->LineTraceSingleByChannel(WeaponResults, WeaponTraceStart, WeaponTraceEnd, ECC_Visibility);
+
+	// Check for hit between the weapons muzzle and the VaporEndPoint
+	if (WeaponResults.bBlockingHit)
+	{
+		// Set the endpoint to the object hit location between the muzzle and where the crosshair is aiming.
+		VaporEndPoint = WeaponResults.Location;
+	}
+	/* Spawn the impact particles where the blocking hit was */
+	if (ImpactFX)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactFX, VaporEndPoint);
+	}
+}
+
+void UShooterCharacterComp::SetbIsAiming(bool Value)
+{
+	bIsAiming = Value;
+}
+
+void UShooterCharacterComp::SetSocketTransform(const FTransform& Value)
+{
+	SocketTransform = Value;
 }
 
 void UShooterCharacterComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

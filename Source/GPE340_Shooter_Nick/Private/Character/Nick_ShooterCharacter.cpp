@@ -28,12 +28,12 @@ ANick_ShooterCharacter::ANick_ShooterCharacter()
 
 	/* Do not rotate the character mesh when the controller rotates */ 
 	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
+	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = false;
 
 	/* Rotate the character to player input movement */
 	// TODO: This will change when strafe movement is implemented along with combat states.
-	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->bOrientRotationToMovement = false;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);
 	GetCharacterMovement()->JumpZVelocity = 650.f;
 	GetCharacterMovement()->AirControl = .4f; // Control of the character while in the air.
@@ -49,7 +49,8 @@ void ANick_ShooterCharacter::BeginPlay()
 	OnFiredWeapon.BindUObject(this, &ANick_ShooterCharacter::FireWeapon);
 	OnAiming.BindUObject(this, &ANick_ShooterCharacter::Aim);
 	
-	
+	/* Set the Camera FOV to the value assigned in the shooter Comp */
+	FollowCamera->FieldOfView = ShooterCharacterComp->DefaultCameraFOV;
 }
 
 void ANick_ShooterCharacter::SetWeaponSocketTransform()
@@ -57,7 +58,7 @@ void ANick_ShooterCharacter::SetWeaponSocketTransform()
 	const USkeletalMeshSocket* BarrelSocket = GetMesh()->GetSocketByName("BarrelSocket");
 	if (BarrelSocket)
 	{
-		ShooterCharacterComp->SocketTransform = BarrelSocket->GetSocketTransform(GetMesh());
+		ShooterCharacterComp->SetSocketTransform(BarrelSocket->GetSocketTransform(GetMesh()));
 	}
 }
 
@@ -89,7 +90,8 @@ void ANick_ShooterCharacter::Aim()
 		AnimInstance->Montage_Play(AimMontage);
 		AnimInstance->Montage_JumpToSection(FName("StartAim"));
 	}
-
-	// Do stuff with the reticle and zoom FOV here.
+	
+	// TODO: Play animation associated with the equipped weapon.  ie raise weapon (at ready state).
+	// Can decrease size of the reticle as well for more precise targeting.
 }
 

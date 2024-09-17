@@ -4,6 +4,7 @@
 #include "GameCore/Nick_ShooterPlayerController.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Camera/CameraComponent.h"
 #include "Character/Nick_ShooterCharacter.h"
 #include "Character/ShooterCharacterComp.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -19,6 +20,7 @@ void ANick_ShooterPlayerController::BeginPlay()
 	}
 }
 
+/* Holds the bindings to all of the player inputs & their action values/methods */
 void ANick_ShooterPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
@@ -30,7 +32,8 @@ void ANick_ShooterPlayerController::SetupInputComponent()
 	ShooterInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ThisClass::JumpStarted);
 	ShooterInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ThisClass::JumpEnd);
 	ShooterInputComponent->BindAction(ShootAction, ETriggerEvent::Started, this, &ThisClass::Fire);
-	ShooterInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &ThisClass::Aim);
+	ShooterInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &ThisClass::AimStarted);
+	ShooterInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &ThisClass::AimCompleted);
 	ShooterInputComponent->BindAction(DodgeAction, ETriggerEvent::Triggered, this, &ThisClass::Dodge);
 
 }
@@ -157,16 +160,28 @@ void ANick_ShooterPlayerController::Fire()
 	PossessedCharacter->OnFiredWeapon.ExecuteIfBound();
 }
 
-void ANick_ShooterPlayerController::Aim()
+void ANick_ShooterPlayerController::AimStarted()
 {
+	PossessedCharacter->GetShooterComp()->SetbIsAiming(true);
+
+	/* Delegate is used here to make a call so that we handle all the animation and camera work in the
+	 * character method and not pollute the controller */
 	PossessedCharacter->OnAiming.ExecuteIfBound();
-	// Call delegate from character to make these changes.
+	/* Set the CameraFOV to the value for when we are aiming */
+	PossessedCharacter->GetFollowCamera()->SetFieldOfView(PossessedCharacter->GetShooterComp()->AimingCameraFOV);
+	
 	UE_LOG(LogTemp, Warning, TEXT("Aiming"));
-	// TODO: Change FOV of Camera
-	// TODO: Play animation associated with the equipped weapon.  ie raise weapon (at ready state).
-	// Can decrease size of the reticle as well for more precise targeting.
+	
+}
+
+void ANick_ShooterPlayerController::AimCompleted()
+{
+	PossessedCharacter->GetShooterComp()->SetbIsAiming(false);
+	/* Set the CameraFOV back to the default value */
+	PossessedCharacter->GetFollowCamera()->SetFieldOfView(PossessedCharacter->GetShooterComp()->DefaultCameraFOV);
 }
 
 void ANick_ShooterPlayerController::Interact()
 {
+	// Future interaction controller method.
 }
