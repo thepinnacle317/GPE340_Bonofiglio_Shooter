@@ -31,6 +31,9 @@ public:
 	/* Used to set the value of the Current Camera FOV for when we are interping between values. */
 	void SetCurrentCameraFOV(float Value);
 
+	/* Used to set the sensitivity rates of the camera when aiming or not */
+	void SetAimSensitivity();
+
 	/* * * Delegate Handles * * */
 	FCrosshairDelegate OnCrosshairTrace;
 
@@ -96,6 +99,7 @@ protected:
 	/* Line Traces */
 	void CrosshairTrace();
 	void WeaponTrace();
+	
 
 private:
 	/* Location of the bullet vapor particle endpoint */

@@ -4,7 +4,6 @@
 #include "GameCore/Nick_ShooterPlayerController.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "Camera/CameraComponent.h"
 #include "Character/Nick_ShooterCharacter.h"
 #include "Character/ShooterCharacterComp.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -49,24 +48,21 @@ void ANick_ShooterPlayerController::Move(const FInputActionValue& InputActionVal
 	// input is a Vector2D
 	const FVector2D MovementVector = InputActionValue.Get<FVector2D>();
 
-	if (APawn* ControlledPawn = GetPawn<APawn>())
-	{
-		// find out which way is forward
-		const FRotator Rotation = GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
+	// find out which way is forward
+	const FRotator Rotation = GetControlRotation();
+	const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-		// get forward vector
-		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	// get forward vector
+	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 	
-		// get right vector 
-		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+	// get right vector 
+	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-		// add movement 
-		ControlledPawn->AddMovementInput(ForwardDirection, MovementVector.Y);
-		Forward_Backward = MovementVector.Y;
-		ControlledPawn->AddMovementInput(RightDirection, MovementVector.X);
-		Left_Right = MovementVector.X;
-	}
+	// add movement 
+	PossessedCharacter->AddMovementInput(ForwardDirection, MovementVector.Y);
+	Forward_Backward = MovementVector.Y;
+	PossessedCharacter->AddMovementInput(RightDirection, MovementVector.X);
+	Left_Right = MovementVector.X;
 }
 
 void ANick_ShooterPlayerController::MoveCompleted()
@@ -75,22 +71,12 @@ void ANick_ShooterPlayerController::MoveCompleted()
 	Left_Right = 0.f;
 }
 
-void ANick_ShooterPlayerController::LookUp(float Rate)
-{
-	PossessedCharacter->AddControllerPitchInput(Rate * PossessedCharacter->GetShooterComp()->BaseLookUpRate * GetWorld()->GetDeltaSeconds());
-}
-
-void ANick_ShooterPlayerController::Turn(float Rate)
-{
-	PossessedCharacter->AddControllerYawInput(Rate * PossessedCharacter->GetShooterComp()->BaseTurnRate * GetWorld()->GetDeltaSeconds());
-}
-
 void ANick_ShooterPlayerController::Look(const FInputActionValue& InputActionValue)
 {
 	// input is a Vector2D
 	FVector2D LookAxisVector = InputActionValue.Get<FVector2D>();
 
-	// add yaw and pitch input to controller
+	/* Add yaw and pitch input to controller *** Use Delta Seconds and base rates for smoother input, especially when zoomed in */
 	//ControlledPawn->AddControllerYawInput(LookAxisVector.X);
 	//ControlledPawn->AddControllerPitchInput(LookAxisVector.Y);
 	PossessedCharacter->AddControllerPitchInput(LookAxisVector.Y * PossessedCharacter->GetShooterComp()->BaseLookUpRate * GetWorld()->GetDeltaSeconds());

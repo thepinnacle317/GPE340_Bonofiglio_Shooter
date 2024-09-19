@@ -61,7 +61,9 @@ void ANick_ShooterCharacter::Tick(float DeltaTime)
 
 	/* Smoothly switch between the aiming and default FOV */
 	InterpolateCameraFOV(DeltaTime);
-
+	
+	/* Update the sensitivity rate based on the state of aiming */
+	ShooterCharacterComp->SetAimSensitivity();
 }
 
 void ANick_ShooterCharacter::SetWeaponSocketTransform() const
@@ -76,6 +78,7 @@ void ANick_ShooterCharacter::SetWeaponSocketTransform() const
 void ANick_ShooterCharacter::FireWeapon()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Fire Weapon"));
+	
 	SetWeaponSocketTransform();
 
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();

@@ -8,3 +8,47 @@ Holds a reference to the currently held actor
 Will hold all the animations for properties
 Character Attributes
 - this component will only hold values and methods that do not require casting to reference the games specific character.  
+
+
+*** Game Settings ***
+*Graphics
+-Engine Scalability
+-AA type
+-Shadows
+-Lighting
+
+*Sound
+-Master
+-Music
+-UI
+-SFX
+
+*Gameplay
+- Input Sensitivity (ADS and Not)
+- Difficulty
+- Base FOV slider
+- ...
+
+
+*** Main Menu UI ***
+Play
+Load		TIP: Don't forget to set your game settings before Play (Cycle through tips)
+Settings
+Quit		Credits
+
+- Dynamic scene with Wraith posing in front of a lunar rover.
+
+*** Character Customization ***
+Set Mesh ... 3-4 options for choosing
+Color sliders for dynamic material instances
+
+*** Level Manager ***
+Choose level. Currently only 1 level
+Loading screen
+Dynamic camera movement to the player start.  Macro to micro view onto the base.
+Spawn player and play spawn animation rising up.
+Give control to the player on finish.
+
+
+*** Level Objectives ***
+-Base Idea: Solve a few different puzzles to get the base up and running while you fend off a relentless attack of enemies

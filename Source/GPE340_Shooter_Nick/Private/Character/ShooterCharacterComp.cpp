@@ -119,6 +119,22 @@ void UShooterCharacterComp::WeaponTrace()
 	}
 }
 
+void UShooterCharacterComp::SetAimSensitivity()
+{
+	if (bIsAiming)
+	{
+		/* Set the camera to a lower sensitivity with the higher camera zoom */
+		BaseTurnRate = AimingTurnRate;
+		BaseLookUpRate = AimingLookUpRate;
+	}
+	else
+	{
+		/* Set the rates to higher sensitivity when the camera is not zoomed in */
+		BaseTurnRate = AtReadyTurnRate;
+		BaseLookUpRate = AtReadyLookUpRate;
+	}
+}
+
 void UShooterCharacterComp::SetbIsAiming(bool Value)
 {
 	bIsAiming = Value;
