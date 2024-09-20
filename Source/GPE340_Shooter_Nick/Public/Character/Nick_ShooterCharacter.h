@@ -34,10 +34,6 @@ protected:
 	
 	virtual void BeginPlay() override;
 
-	void SetWeaponSocketTransform() const;
-	
-	/* Gameplay Actions */
-	void FireWeapon();
 	void Aim();
 
 	void InterpolateCameraFOV(float DeltaTime);

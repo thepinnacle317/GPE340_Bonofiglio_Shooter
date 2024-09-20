@@ -2,6 +2,9 @@
 
 
 #include "Character/ShooterCharacterComp.h"
+
+#include "Engine/SkeletalMeshSocket.h"
+#include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
 
@@ -13,7 +16,7 @@ UShooterCharacterComp::UShooterCharacterComp() :
 	AimingCameraFOV(40.f),
 	AimInterpSpeed(20.f),
 	/* Character Speed Values */
-	DefaultCharacterSpeed(600.f),
+	DefaultCharacterSpeed(500.f),
 	AimingCharacterSpeed(350),
 	bIsAiming(false),
 	CurrentCameraFOV(0.f),
@@ -23,7 +26,11 @@ UShooterCharacterComp::UShooterCharacterComp() :
 	AtReadyTurnRate(90.f),
 	AtReadyLookUpRate(90.f),
 	AimingTurnRate(25.f),
-	AimingLookUpRate(25.f)
+	AimingLookUpRate(25.f),
+	/* Gun Firing Variables */
+	AutoFireRate(0.1f),
+	bShouldFire(true),
+	bFireButtonDown(false)
 {
 	PrimaryComponentTick.bCanEverTick = false;
 	
@@ -32,6 +39,8 @@ UShooterCharacterComp::UShooterCharacterComp() :
 void UShooterCharacterComp::BeginPlay()
 {
 	Super::BeginPlay();
+
+	OwningCharacter = Cast<ACharacter>(GetOwner());
 
 	OnCrosshairTrace.BindUObject(this, &UShooterCharacterComp::CrosshairTrace);
 
@@ -119,6 +128,30 @@ void UShooterCharacterComp::WeaponTrace()
 	}
 }
 
+void UShooterCharacterComp::FirePressed()
+{
+	bFireButtonDown = true;
+	StartFireTimer();
+}
+
+void UShooterCharacterComp::FireReleased()
+{
+	bFireButtonDown = false;
+}
+
+void UShooterCharacterComp::FireWeapon()
+{
+	SetWeaponSocketTransform();
+	/* Play montage associated with firing weapons */
+	UAnimInstance* AnimInstance = OwningCharacter->GetMesh()->GetAnimInstance();
+		
+	if (AnimInstance && HipFireMontage)
+	{
+		AnimInstance->Montage_Play(HipFireMontage);
+		AnimInstance->Montage_JumpToSection(FName("StartFire"));CrosshairTrace();
+	}
+}
+
 void UShooterCharacterComp::SetAimSensitivity()
 {
 	if (bIsAiming)
@@ -154,5 +187,33 @@ void UShooterCharacterComp::TickComponent(float DeltaTime, ELevelTick TickType, 
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+}
+
+void UShooterCharacterComp::StartFireTimer()
+{
+	if (bShouldFire)
+	{
+		FireWeapon();
+		bShouldFire = false;
+		GetWorld()->GetTimerManager().SetTimer(AutoFireTimer, this, &UShooterCharacterComp::FireTimerReset, AutoFireRate, false);
+	}
+}
+
+void UShooterCharacterComp::SetWeaponSocketTransform()
+{
+	const USkeletalMeshSocket* BarrelSocket = OwningCharacter->GetMesh()->GetSocketByName("BarrelSocket");
+	if (BarrelSocket)
+	{
+		SetSocketTransform(BarrelSocket->GetSocketTransform(OwningCharacter->GetMesh()));
+	}
+}
+
+void UShooterCharacterComp::FireTimerReset()
+{
+	bShouldFire = true;
+	if (bFireButtonDown)
+	{
+		StartFireTimer();
+	}
 }
 

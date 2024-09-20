@@ -34,6 +34,24 @@ public:
 	/* Used to set the sensitivity rates of the camera when aiming or not */
 	void SetAimSensitivity();
 
+
+	/* Move to the Weapon Component once the base weapon item has been setup with pickup logic */
+	/* The Weapon Component will have delegates that can be called to execute logic based on input or events */
+	void FirePressed();
+	void FireReleased();
+	void FireWeapon();
+	void StartFireTimer();
+
+	UFUNCTION()
+	void FireTimerReset();
+
+	/* Get the Socket Transform for the held Weapon */
+	// TODO: Refactor for when the holdable weapon logic is done.  Will Get the socket from the mesh of the held actor.
+	void SetWeaponSocketTransform();
+
+	/* Used for retrieving generic data that is need to access the anim instance */
+	TObjectPtr<ACharacter> OwningCharacter;
+
 	/* * * Delegate Handles * * */
 	FCrosshairDelegate OnCrosshairTrace;
 
@@ -93,12 +111,21 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Shooter Core | Movement | Aiming")
 	float AimingLookUpRate;
 
+	/* This will be moved to the weapon */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Shooter Core | Combat Properties | Weapons")
+	float AutoFireRate;
+
+	/* Timer For weapon Firing */
+	FTimerHandle AutoFireTimer;
+
 protected:
 	virtual void BeginPlay() override;
 
 	/* Line Traces */
 	void CrosshairTrace();
 	void WeaponTrace();
+
+	
 	
 
 private:
@@ -117,11 +144,21 @@ private:
 	/* Current Frames Camer FOV */
 	float CurrentCameraFOV;
 
+	/* Used to determine if the fire button is being pressed */
+	bool bFireButtonDown;
+
+	/* Should a bullet/trace happen?  */
+	bool bShouldFire;
+
+	
+
 public:
 	/* The compiler will ultimately determine if these getters will be Inline or not */
 	FORCEINLINE FTransform GetSocketTransform() const { return SocketTransform; }
 	FORCEINLINE bool GetbIsAiming() const { return bIsAiming; }
 	FORCEINLINE float GetCurrentCameraFOV() const { return CurrentCameraFOV; }
+	FORCEINLINE FVector GetVaporEndpoint() const { return VaporEndPoint; }
+	FORCEINLINE bool GetbFireButtonDown() const { return bFireButtonDown; }
 
 	
 		

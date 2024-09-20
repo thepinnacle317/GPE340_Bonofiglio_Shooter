@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Item_Base.generated.h"
 
+class UWidgetComponent;
 class UBoxComponent;
 
 UCLASS()
@@ -32,9 +33,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UBoxComponent> CollisionBox;
 
-
-
-public:
-	
-
+	/* World Widget that displays when the player looks at the item */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UWidgetComponent> PickupWidget;
 };

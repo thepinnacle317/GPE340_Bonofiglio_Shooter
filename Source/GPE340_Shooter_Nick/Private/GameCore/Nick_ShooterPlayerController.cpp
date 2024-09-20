@@ -30,7 +30,8 @@ void ANick_ShooterPlayerController::SetupInputComponent()
 	ShooterInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ThisClass::Look);
 	ShooterInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ThisClass::JumpStarted);
 	ShooterInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ThisClass::JumpEnd);
-	ShooterInputComponent->BindAction(ShootAction, ETriggerEvent::Started, this, &ThisClass::Fire);
+	ShooterInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &ThisClass::Firing);
+	ShooterInputComponent->BindAction(ShootAction, ETriggerEvent::Completed, this, &ThisClass::NotFiring);
 	ShooterInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &ThisClass::AimStarted);
 	ShooterInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &ThisClass::AimCompleted);
 	ShooterInputComponent->BindAction(DodgeAction, ETriggerEvent::Triggered, this, &ThisClass::Dodge);
@@ -150,9 +151,15 @@ FName ANick_ShooterPlayerController::GetDirectionalDodgeSection()
 }
 
 
-void ANick_ShooterPlayerController::Fire()
+void ANick_ShooterPlayerController::Firing()
 {
-	PossessedCharacter->OnFiredWeapon.ExecuteIfBound();
+	PossessedCharacter->GetShooterComp()->FirePressed();
+	//PossessedCharacter->OnFiredWeapon.ExecuteIfBound();
+}
+
+void ANick_ShooterPlayerController::NotFiring()
+{
+	PossessedCharacter->GetShooterComp()->FireReleased();
 }
 
 void ANick_ShooterPlayerController::AimStarted()

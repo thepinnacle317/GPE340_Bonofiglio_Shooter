@@ -66,7 +66,8 @@ private:
 	FName GetDirectionalDodgeSection();
 
 	/* Gameplay Actions */
-	void Fire();
+	void Firing();
+	void NotFiring();
 	void AimStarted();
 	void AimCompleted();
 	void Interact();

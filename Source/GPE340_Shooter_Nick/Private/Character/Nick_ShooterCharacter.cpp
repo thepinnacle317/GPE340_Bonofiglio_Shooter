@@ -4,7 +4,6 @@
 #include "Character/Nick_ShooterCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "Character/ShooterCharacterComp.h"
-#include "Engine/SkeletalMeshSocket.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
@@ -45,7 +44,7 @@ void ANick_ShooterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	// Can be substituted for a more generic delegate that can be bound based on actions.
-	OnFiredWeapon.BindUObject(this, &ANick_ShooterCharacter::FireWeapon);
+	//OnFiredWeapon.BindUObject(this, &ANick_ShooterCharacter::FireWeapon);
 	OnAiming.BindUObject(this, &ANick_ShooterCharacter::Aim);
 	
 	/* Set the Camera FOV to the value assigned in the shooter Comp */
@@ -64,30 +63,6 @@ void ANick_ShooterCharacter::Tick(float DeltaTime)
 	
 	/* Update the sensitivity rate based on the state of aiming */
 	ShooterCharacterComp->SetAimSensitivity();
-}
-
-void ANick_ShooterCharacter::SetWeaponSocketTransform() const
-{
-	const USkeletalMeshSocket* BarrelSocket = GetMesh()->GetSocketByName("BarrelSocket");
-	if (BarrelSocket)
-	{
-		ShooterCharacterComp->SetSocketTransform(BarrelSocket->GetSocketTransform(GetMesh()));
-	}
-}
-
-void ANick_ShooterCharacter::FireWeapon()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Fire Weapon"));
-	
-	SetWeaponSocketTransform();
-
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance && ShooterCharacterComp->HipFireMontage)
-	{
-		AnimInstance->Montage_Play(ShooterCharacterComp->HipFireMontage);
-		AnimInstance->Montage_JumpToSection(FName("StartFire"));
-		ShooterCharacterComp->OnCrosshairTrace.ExecuteIfBound();
-	}
 }
 
 void ANick_ShooterCharacter::Aim()
