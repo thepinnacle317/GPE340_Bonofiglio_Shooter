@@ -2,10 +2,10 @@
 
 
 #include "Actors/Item_Base.h"
-
 #include "Components/BoxComponent.h"
+#include "Components/WidgetComponent.h"
 
-// Sets default values
+
 AItem_Base::AItem_Base()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -15,13 +15,20 @@ AItem_Base::AItem_Base()
 
 	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("Collision Box"));
 	CollisionBox->SetupAttachment(ItemMesh);
+	CollisionBox->SetCollisionResponseToAllChannels(ECR_Ignore);
+	CollisionBox->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+
+	PickupWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Pickup Widget"));
+	PickupWidget->SetupAttachment(GetRootComponent());
 
 }
 
 void AItem_Base::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	/* Hide Pickup Widget At Start */
+	PickupWidget->SetVisibility(false);	
 }
 
 void AItem_Base::Tick(float DeltaTime)

@@ -3,10 +3,12 @@
 
 #include "Character/ShooterCharacterComp.h"
 
+#include "Character/InteractionComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
+
 
 // Sets default values for this component's properties
 UShooterCharacterComp::UShooterCharacterComp() :

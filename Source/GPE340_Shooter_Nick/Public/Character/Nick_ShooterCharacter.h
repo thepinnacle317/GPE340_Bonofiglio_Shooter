@@ -7,6 +7,7 @@
 #include "Nick_ShooterCharacter.generated.h"
 
 
+class UInteractionComponent;
 /* Forward Declarations */
 class UShooterCharacterComp;
 class UCameraComponent;
@@ -51,6 +52,10 @@ private:
 	/* Component that holds essential functionality to character gameplay */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UShooterCharacterComp> ShooterCharacterComp;
+
+	/* Component that holds Interaction functionality */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Camera", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInteractionComponent> InteractionComponent;
 	
 
 public:

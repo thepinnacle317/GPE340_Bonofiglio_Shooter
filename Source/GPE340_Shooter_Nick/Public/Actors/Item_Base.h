@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Item_Base.generated.h"
 
+/* Forward Declarations */
 class UWidgetComponent;
 class UBoxComponent;
 
@@ -36,4 +37,7 @@ private:
 	/* World Widget that displays when the player looks at the item */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UWidgetComponent> PickupWidget;
+
+public:
+	FORCEINLINE TObjectPtr<UWidgetComponent> GetPickupWidget() const { return PickupWidget; }
 };

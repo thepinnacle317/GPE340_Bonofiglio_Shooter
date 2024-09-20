@@ -3,6 +3,7 @@
 
 #include "Character/Nick_ShooterCharacter.h"
 #include "Camera/CameraComponent.h"
+#include "Character/InteractionComponent.h"
 #include "Character/ShooterCharacterComp.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -36,8 +37,10 @@ ANick_ShooterCharacter::ANick_ShooterCharacter()
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);
 	GetCharacterMovement()->JumpZVelocity = 650.f;
 	GetCharacterMovement()->AirControl = .4f; // Control of the character while in the air.
-	
+
+	/* Core Gameplay Components */
 	ShooterCharacterComp = CreateDefaultSubobject<UShooterCharacterComp>(TEXT("Shooter Character Component"));
+	InteractionComponent = CreateDefaultSubobject<UInteractionComponent>(TEXT("Interaction Component"));
 }
 
 void ANick_ShooterCharacter::BeginPlay()
