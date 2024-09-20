@@ -38,6 +38,14 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UWidgetComponent> PickupWidget;
 
+	/* Variable Used to assign the name of the item and show in the pickup widget */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta = (AllowPrivateAccess = "true"))
+	FString ItemName;
+
+	/* Represents the amount of ammo on a weapon or amount dropped */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Item Properties", meta = (AllowPrivateAccess = "true"))
+	int32 ItemAmount;
+
 public:
 	FORCEINLINE TObjectPtr<UWidgetComponent> GetPickupWidget() const { return PickupWidget; }
 };

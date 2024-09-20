@@ -71,7 +71,19 @@ void UInteractionComponent::StartInteractionTimer()
 		{
 			// Set Widget visibilty
 			HitItem->GetPickupWidget()->SetVisibility(true);
+			
 		}
+		/* AItem Was Hit last frame */
+		if (HitItemLastFrame)
+		{
+			if (HitItem != HitItemLastFrame)
+			{
+				/* Hitting Different AItem_Base this frame than last or it is null */
+				HitItemLastFrame->GetPickupWidget()->SetVisibility(false);
+            }
+		}
+		/* Store a reference to the last hit item */
+		HitItemLastFrame = HitItem;
 	}
 	else
 	{

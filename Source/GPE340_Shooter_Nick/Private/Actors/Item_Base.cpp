@@ -6,7 +6,9 @@
 #include "Components/WidgetComponent.h"
 
 
-AItem_Base::AItem_Base()
+AItem_Base::AItem_Base():
+ItemName(FString("Default Weapon")),
+ItemAmount(0)
 {
 	PrimaryActorTick.bCanEverTick = true;
 

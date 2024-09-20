@@ -20,6 +20,7 @@ public:
 
 	FTimerHandle InteractionHandle;
 	FHitResult ItemResults;
+	TObjectPtr<AItem_Base> HitItemLastFrame;
 	TObjectPtr<AItem_Base> HitItem;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Interaction | Trace Properties")
