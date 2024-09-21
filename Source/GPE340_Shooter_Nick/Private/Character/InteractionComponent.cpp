@@ -9,18 +9,19 @@
 
 // Sets default values for this component's properties
 UInteractionComponent::UInteractionComponent() :
+/* Member Initializer List : Put these in order by initialization */
 	TraceRate(.05f),
 	InteractionTraceDistance(500.f),
 	WidgetDisappearDistance(400.f)
 {
 	PrimaryComponentTick.bCanEverTick = false;
-	
 }
 
 void UInteractionComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	/* Start the interaction timer *** More performant method than using tick */
 	GetWorld()->GetTimerManager().SetTimer(InteractionHandle, this, &UInteractionComponent::StartInteractionTimer, TraceRate, true);
 	
 }
@@ -38,7 +39,8 @@ bool UInteractionComponent::InteractionTrace(FHitResult& OutHitResult)
 	FVector2D CrosshairLocation(ViewportSize.X / 2.f, ViewportSize.Y / 2.f);
 	
 	CrosshairLocation.Y -= 50.f; // Move the crosshair up 50 units on the screen.
-	
+
+	/* These get set when we call deproject and will be used to get world vectors */
 	FVector CrosshairWorldPosition;
 	FVector CrosshairWorldDirection;
 
@@ -87,6 +89,7 @@ void UInteractionComponent::StartInteractionTimer()
 	}
 	else
 	{
+		/* Distance based failsafe for removing a item pickup Widget */
 		float DistanceToItem = GetOwner()->GetDistanceTo(HitItem);
 		if(DistanceToItem > WidgetDisappearDistance)
 		{

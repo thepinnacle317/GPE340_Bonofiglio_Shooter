@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "ShooterCharacterComp.generated.h"
 
+class AWeapon_Base;
 DECLARE_DELEGATE(FCrosshairDelegate);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), BlueprintType)
@@ -118,16 +119,19 @@ public:
 	/* Timer For weapon Firing */
 	FTimerHandle AutoFireTimer;
 
+	
+
 protected:
 	virtual void BeginPlay() override;
 
-	/* Line Traces */
+	/* Runs a trace from the center of the crosshairs outwards */
 	void CrosshairTrace();
+	/* Runs a trace from the barrel socket to the end of the crosshairs trace */
 	void WeaponTrace();
-
-	
-	
-
+	/* Spawns the starter weapon for the character at start */
+	AWeapon_Base* SpawnDefaultWeapon();
+	/* Equips the weapon to the character by socket */
+	void EquipWeapon(AWeapon_Base* WeaponToBeEquipped);
 private:
 	/* Location of the bullet vapor particle endpoint */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Shooter Core | Combat Properties | No Edit", meta = (AllowPrivateAccess = "true"))
@@ -150,7 +154,13 @@ private:
 	/* Should a bullet/trace happen?  */
 	bool bShouldFire;
 
-	
+	/* The Currently Equipped Weapon on the character */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Shooter Core | Combat Properties | Weapons", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<AWeapon_Base> CurrentWeapon;
+
+	/* Used to set the default weapon the player will start with */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Shooter Core", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AWeapon_Base> DefaultWeaponClass;
 
 public:
 	/* The compiler will ultimately determine if these getters will be Inline or not */

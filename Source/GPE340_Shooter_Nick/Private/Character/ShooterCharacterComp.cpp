@@ -2,8 +2,8 @@
 
 
 #include "Character/ShooterCharacterComp.h"
-
-#include "Character/InteractionComponent.h"
+#include "Actors/Weapons/Weapon_Base.h"
+#include "Components/BoxComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
@@ -42,11 +42,17 @@ void UShooterCharacterComp::BeginPlay()
 {
 	Super::BeginPlay();
 
+	/* Character reference for the owner of the component *** Used mostly for getting skeletal data */
 	OwningCharacter = Cast<ACharacter>(GetOwner());
 
+	/* Crosshair Trace delegate binding */
 	OnCrosshairTrace.BindUObject(this, &UShooterCharacterComp::CrosshairTrace);
 
+	/* Base setting of the Camera FOV */
 	CurrentCameraFOV = DefaultCameraFOV;
+
+	/* Spawn & Equip the weapon for the character at the start of play */
+	EquipWeapon(SpawnDefaultWeapon());
 	
 }
 
@@ -127,6 +133,38 @@ void UShooterCharacterComp::WeaponTrace()
 	if (ImpactFX)
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactFX, VaporEndPoint);
+	}
+}
+
+AWeapon_Base* UShooterCharacterComp::SpawnDefaultWeapon()
+{
+	/* Make sure that the weapon class was set in the character and is valid */
+	if (DefaultWeaponClass)
+	{
+		/* Set the local WeaponActor to the spawn class, so it can be attached */
+		return GetWorld()->SpawnActor<AWeapon_Base>(DefaultWeaponClass);
+	}
+	return nullptr;
+}
+
+void UShooterCharacterComp::EquipWeapon(AWeapon_Base* WeaponToBeEquipped)
+{
+	if (WeaponToBeEquipped)
+	{
+		/* Set Collision Box to ignore all collision channels, so we do not hit it or trigger the widget */
+		WeaponToBeEquipped->GetCollisionBox()->SetCollisionResponseToAllChannels(ECR_Ignore);
+		
+		/* Get the socket that the weapon will be attached to */
+		const USkeletalMeshSocket* WeaponSocket = OwningCharacter->GetMesh()->GetSocketByName(FName("WeaponSocket_R"));
+
+		if (WeaponSocket)
+		{
+			/* Attach the weapon to the weapon socket on the right hand */
+			WeaponSocket->AttachActor(WeaponToBeEquipped, OwningCharacter->GetMesh());
+		}
+
+		/* Sets the Current Weapon to the weapon that was spawned */
+		CurrentWeapon = WeaponToBeEquipped;
 	}
 }
 

@@ -8,7 +8,8 @@
 
 AItem_Base::AItem_Base():
 ItemName(FString("Default Weapon")),
-ItemAmount(0)
+ItemAmount(0),
+ItemRarity(EItemRarity::EIR_Common)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -30,7 +31,51 @@ void AItem_Base::BeginPlay()
 	Super::BeginPlay();
 
 	/* Hide Pickup Widget At Start */
-	PickupWidget->SetVisibility(false);	
+	if (PickupWidget)
+	{
+		PickupWidget->SetVisibility(false);
+	}
+
+	/* Visual Set the value of the item rarity */
+	SetItemRarity();
+}
+
+void AItem_Base::SetItemRarity()
+{
+	/* Does not use zero so that the index aligns with the visual rarity value */
+	for (int32 i = 0; i <= 5; i++)
+	{
+		ActiveRarity.Add(false);
+	}
+
+	switch (ItemRarity)
+	{
+	case EItemRarity::EIR_Common:
+		ActiveRarity[1] = true;
+		break;
+	case EItemRarity::EIR_Uncommon:
+		ActiveRarity[1] = true;
+		ActiveRarity[2] = true;
+		break;
+	case EItemRarity::EIR_Rare:
+		ActiveRarity[1] = true;
+		ActiveRarity[2] = true;
+		ActiveRarity[3] = true;
+		break;
+	case EItemRarity::EIR_Epic:
+		ActiveRarity[1] = true;
+		ActiveRarity[2] = true;
+		ActiveRarity[3] = true;
+		ActiveRarity[4] = true;
+		break;
+	case EItemRarity::EIR_Legendary:
+		ActiveRarity[1] = true;
+		ActiveRarity[2] = true;
+		ActiveRarity[3] = true;
+		ActiveRarity[4] = true;
+		ActiveRarity[5] = true;
+		break;
+	}
 }
 
 void AItem_Base::Tick(float DeltaTime)

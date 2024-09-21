@@ -10,6 +10,18 @@
 class UWidgetComponent;
 class UBoxComponent;
 
+UENUM(BlueprintType)
+enum class EItemRarity : uint8
+{
+	EIR_Common UMETA(DisplayName = "Common"),
+	EIR_Uncommon UMETA(DisplayName = "Uncommon"),
+	EIR_Rare UMETA(DisplayName = "Rare"),
+	EIR_Epic UMETA(DisplayName = "Epic"),
+	EIR_Legendary UMETA(DisplayName = "Legendary"),
+
+	EIR_Max UMETA(DisplayName = "Default Max")
+};
+
 UCLASS()
 class GPE340_SHOOTER_NICK_API AItem_Base : public AActor
 {
@@ -23,6 +35,9 @@ public:
 protected:
 	
 	virtual void BeginPlay() override;
+
+	/* Used to visually set the value of the item rarity in the pickup widget */
+	void SetItemRarity();
 
 private:
 
@@ -46,6 +61,14 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Item Properties", meta = (AllowPrivateAccess = "true"))
 	int32 ItemAmount;
 
+	/* Item Rarity is used to show a visual representation throughout the game */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Item Properties", meta = (AllowPrivateAccess = "true"))
+	EItemRarity ItemRarity;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Item Properties", meta = (AllowPrivateAccess = "true"))
+	TArray<bool> ActiveRarity;
+
 public:
 	FORCEINLINE TObjectPtr<UWidgetComponent> GetPickupWidget() const { return PickupWidget; }
+	FORCEINLINE TObjectPtr<UBoxComponent> GetCollisionBox() const { return CollisionBox; }
 };
