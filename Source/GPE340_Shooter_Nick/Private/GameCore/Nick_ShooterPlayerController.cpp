@@ -154,7 +154,6 @@ FName ANick_ShooterPlayerController::GetDirectionalDodgeSection()
 void ANick_ShooterPlayerController::Firing()
 {
 	PossessedCharacter->GetShooterComp()->FirePressed();
-	//PossessedCharacter->OnFiredWeapon.ExecuteIfBound();
 }
 
 void ANick_ShooterPlayerController::NotFiring()
@@ -172,7 +171,7 @@ void ANick_ShooterPlayerController::AimStarted()
 
 	/* Delegate is used here to make a call so that we handle all the animation and camera work in the
 	 * character method and not pollute the controller */
-	PossessedCharacter->OnAiming.ExecuteIfBound();
+	PossessedCharacter->OnAiming.Execute();
 	
 	//UE_LOG(LogTemp, Warning, TEXT("Aiming"));
 }

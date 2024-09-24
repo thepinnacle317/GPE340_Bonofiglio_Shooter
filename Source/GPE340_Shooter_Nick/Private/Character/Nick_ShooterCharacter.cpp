@@ -46,8 +46,7 @@ ANick_ShooterCharacter::ANick_ShooterCharacter()
 void ANick_ShooterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	// Can be substituted for a more generic delegate that can be bound based on actions.
-	//OnFiredWeapon.BindUObject(this, &ANick_ShooterCharacter::FireWeapon);
+	
 	OnAiming.BindUObject(this, &ANick_ShooterCharacter::Aim);
 	
 	/* Set the Camera FOV to the value assigned in the shooter Comp */

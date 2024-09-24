@@ -2,8 +2,9 @@
 
 
 #include "Character/ShooterCharacterComp.h"
+#include "Actors/Weapons/WeaponComp.h"
 #include "Actors/Weapons/Weapon_Base.h"
-#include "Components/BoxComponent.h"
+#include "Character/Nick_ShooterCharacter.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
@@ -29,10 +30,9 @@ UShooterCharacterComp::UShooterCharacterComp() :
 	AtReadyLookUpRate(90.f),
 	AimingTurnRate(25.f),
 	AimingLookUpRate(25.f),
-	/* Gun Firing Variables */
-	AutoFireRate(0.1f),
-	bShouldFire(true),
-	bFireButtonDown(false)
+	/* Gun Input Variables */
+	bFireButtonDown(false),
+	bShouldFire(true)
 {
 	PrimaryComponentTick.bCanEverTick = false;
 	
@@ -43,7 +43,7 @@ void UShooterCharacterComp::BeginPlay()
 	Super::BeginPlay();
 
 	/* Character reference for the owner of the component *** Used mostly for getting skeletal data */
-	OwningCharacter = Cast<ACharacter>(GetOwner());
+	OwningCharacter = Cast<ANick_ShooterCharacter>(GetOwner());
 
 	/* Crosshair Trace delegate binding */
 	OnCrosshairTrace.BindUObject(this, &UShooterCharacterComp::CrosshairTrace);
@@ -97,7 +97,12 @@ void UShooterCharacterComp::CrosshairTrace()
 			VaporEndPoint = ScreenTraceHit.Location;
 		}
 
-		WeaponTrace();
+		if (CurrentWeapon != nullptr)
+		{
+			// Call WeaponTrace Delegate
+			CurrentWeapon->WeaponComponent->WeaponTraceDelegate.Execute();
+		}
+		
 		
 		/* Spawn the Beam Vapor Trail */
 		if (VaporTrail)
@@ -109,30 +114,6 @@ void UShooterCharacterComp::CrosshairTrace()
 				VaporBeam->SetVectorParameter(FName("Target"), VaporEndPoint);
 			}
 		}
-	}
-}
-
-/** Perform a trace from the weapon's muzzle to the
- * end hit location of the crosshair to check for obstructing objects.
- */
-void UShooterCharacterComp::WeaponTrace()
-{
-	/*** Line Trace from Gun Barrel ***/
-	FHitResult WeaponResults;
-	const FVector WeaponTraceStart{ SocketTransform.GetLocation() };
-	const FVector WeaponTraceEnd{ VaporEndPoint };
-	GetWorld()->LineTraceSingleByChannel(WeaponResults, WeaponTraceStart, WeaponTraceEnd, ECC_Visibility);
-
-	// Check for hit between the weapons muzzle and the VaporEndPoint
-	if (WeaponResults.bBlockingHit)
-	{
-		// Set the endpoint to the object hit location between the muzzle and where the crosshair is aiming.
-		VaporEndPoint = WeaponResults.Location;
-	}
-	/* Spawn the impact particles where the blocking hit was */
-	if (ImpactFX)
-	{
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactFX, VaporEndPoint);
 	}
 }
 
@@ -151,9 +132,6 @@ void UShooterCharacterComp::EquipWeapon(AWeapon_Base* WeaponToBeEquipped)
 {
 	if (WeaponToBeEquipped)
 	{
-		/* Set Collision Box to ignore all collision channels, so we do not hit it or trigger the widget */
-		WeaponToBeEquipped->GetCollisionBox()->SetCollisionResponseToAllChannels(ECR_Ignore);
-		
 		/* Get the socket that the weapon will be attached to */
 		const USkeletalMeshSocket* WeaponSocket = OwningCharacter->GetMesh()->GetSocketByName(FName("WeaponSocket_R"));
 
@@ -165,31 +143,28 @@ void UShooterCharacterComp::EquipWeapon(AWeapon_Base* WeaponToBeEquipped)
 
 		/* Sets the Current Weapon to the weapon that was spawned */
 		CurrentWeapon = WeaponToBeEquipped;
+
+		CurrentWeapon->OwningCharacter = OwningCharacter;
+		CurrentWeapon->WeaponComponent->OwningShooterCharacter = OwningCharacter;
+
+		/* Change the state of the Item/Weapon to equipped*/
+		/* Set Collision Box to ignore all collision channels, so we do not hit it or trigger the widget Based on the state*/
+		CurrentWeapon->SetItemState(EItemState::EIS_Equipped);
 	}
 }
 
 void UShooterCharacterComp::FirePressed()
 {
 	bFireButtonDown = true;
-	StartFireTimer();
+	if (CurrentWeapon != nullptr)
+	{
+		CurrentWeapon->WeaponComponent->StartFireTimer();
+	}
 }
 
 void UShooterCharacterComp::FireReleased()
 {
 	bFireButtonDown = false;
-}
-
-void UShooterCharacterComp::FireWeapon()
-{
-	SetWeaponSocketTransform();
-	/* Play montage associated with firing weapons */
-	UAnimInstance* AnimInstance = OwningCharacter->GetMesh()->GetAnimInstance();
-		
-	if (AnimInstance && HipFireMontage)
-	{
-		AnimInstance->Montage_Play(HipFireMontage);
-		AnimInstance->Montage_JumpToSection(FName("StartFire"));CrosshairTrace();
-	}
 }
 
 void UShooterCharacterComp::SetAimSensitivity()
@@ -223,37 +198,12 @@ void UShooterCharacterComp::SetCurrentCameraFOV(float Value)
 	CurrentCameraFOV = Value;
 }
 
-void UShooterCharacterComp::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-}
-
-void UShooterCharacterComp::StartFireTimer()
-{
-	if (bShouldFire)
-	{
-		FireWeapon();
-		bShouldFire = false;
-		GetWorld()->GetTimerManager().SetTimer(AutoFireTimer, this, &UShooterCharacterComp::FireTimerReset, AutoFireRate, false);
-	}
-}
-
 void UShooterCharacterComp::SetWeaponSocketTransform()
 {
 	const USkeletalMeshSocket* BarrelSocket = OwningCharacter->GetMesh()->GetSocketByName("BarrelSocket");
 	if (BarrelSocket)
 	{
 		SetSocketTransform(BarrelSocket->GetSocketTransform(OwningCharacter->GetMesh()));
-	}
-}
-
-void UShooterCharacterComp::FireTimerReset()
-{
-	bShouldFire = true;
-	if (bFireButtonDown)
-	{
-		StartFireTimer();
 	}
 }
 

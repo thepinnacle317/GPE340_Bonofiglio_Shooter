@@ -6,10 +6,10 @@
 #include "Components/ActorComponent.h"
 #include "InteractionComponent.generated.h"
 
-
+/* Forward Declarations */
 class AItem_Base;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), BlueprintType )
 class GPE340_SHOOTER_NICK_API UInteractionComponent : public UActorComponent
 {
 	GENERATED_BODY()

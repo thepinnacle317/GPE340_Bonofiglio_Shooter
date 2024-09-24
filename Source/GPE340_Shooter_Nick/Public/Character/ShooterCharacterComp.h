@@ -6,7 +6,10 @@
 #include "Components/ActorComponent.h"
 #include "ShooterCharacterComp.generated.h"
 
+/* Forward Declarations */
+class ANick_ShooterCharacter;
 class AWeapon_Base;
+
 DECLARE_DELEGATE(FCrosshairDelegate);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), BlueprintType)
@@ -17,7 +20,6 @@ class GPE340_SHOOTER_NICK_API UShooterCharacterComp : public UActorComponent
 public:	
 
 	UShooterCharacterComp();
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
 	/* Used to set the trace range for the crosshairs */
 	UPROPERTY(EditAnywhere, Category="Shooter Core | Camera Properties | Trace Properties")
@@ -40,18 +42,16 @@ public:
 	/* The Weapon Component will have delegates that can be called to execute logic based on input or events */
 	void FirePressed();
 	void FireReleased();
-	void FireWeapon();
-	void StartFireTimer();
 
-	UFUNCTION()
-	void FireTimerReset();
+	/* Runs a trace from the center of the crosshairs outwards */
+	void CrosshairTrace();
 
 	/* Get the Socket Transform for the held Weapon */
 	// TODO: Refactor for when the holdable weapon logic is done.  Will Get the socket from the mesh of the held actor.
 	void SetWeaponSocketTransform();
 
 	/* Used for retrieving generic data that is need to access the anim instance */
-	TObjectPtr<ACharacter> OwningCharacter;
+	TObjectPtr<ANick_ShooterCharacter> OwningCharacter;
 
 	/* * * Delegate Handles * * */
 	FCrosshairDelegate OnCrosshairTrace;
@@ -112,26 +112,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Shooter Core | Movement | Aiming")
 	float AimingLookUpRate;
 
-	/* This will be moved to the weapon */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Shooter Core | Combat Properties | Weapons")
-	float AutoFireRate;
-
-	/* Timer For weapon Firing */
-	FTimerHandle AutoFireTimer;
-
-	
-
 protected:
 	virtual void BeginPlay() override;
-
-	/* Runs a trace from the center of the crosshairs outwards */
-	void CrosshairTrace();
-	/* Runs a trace from the barrel socket to the end of the crosshairs trace */
-	void WeaponTrace();
+	
 	/* Spawns the starter weapon for the character at start */
 	AWeapon_Base* SpawnDefaultWeapon();
+	
 	/* Equips the weapon to the character by socket */
 	void EquipWeapon(AWeapon_Base* WeaponToBeEquipped);
+	
 private:
 	/* Location of the bullet vapor particle endpoint */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Shooter Core | Combat Properties | No Edit", meta = (AllowPrivateAccess = "true"))
@@ -168,7 +157,10 @@ public:
 	FORCEINLINE bool GetbIsAiming() const { return bIsAiming; }
 	FORCEINLINE float GetCurrentCameraFOV() const { return CurrentCameraFOV; }
 	FORCEINLINE FVector GetVaporEndpoint() const { return VaporEndPoint; }
+	FORCEINLINE void SetVaporEndpoint(const FVector& EndPoint) { VaporEndPoint = EndPoint; }
 	FORCEINLINE bool GetbFireButtonDown() const { return bFireButtonDown; }
+	FORCEINLINE bool GetbShouldFire() const { return bShouldFire; }
+	FORCEINLINE void SetbShouldFire(bool ShouldFire) { bShouldFire = ShouldFire; }
 
 	
 		

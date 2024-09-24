@@ -9,9 +9,10 @@
 AItem_Base::AItem_Base():
 ItemName(FString("Default Weapon")),
 ItemAmount(0),
-ItemRarity(EItemRarity::EIR_Common)
+ItemRarity(EItemRarity::EIR_Common),
+ItemState(EItemState::EIS_PickupReady)
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	ItemMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Item Mesh"));
 	SetRootComponent(ItemMesh);
@@ -38,6 +39,9 @@ void AItem_Base::BeginPlay()
 
 	/* Visual Set the value of the item rarity */
 	SetItemRarity();
+
+	/* Set the properties of the item based on the current state it is in */
+	SetItemProps(ItemState);
 }
 
 void AItem_Base::SetItemRarity()
@@ -78,9 +82,52 @@ void AItem_Base::SetItemRarity()
 	}
 }
 
-void AItem_Base::Tick(float DeltaTime)
+void AItem_Base::SetItemProps(EItemState State)
 {
-	Super::Tick(DeltaTime);
+	switch (State)
+	{
+	case EItemState::EIS_PickupReady:
+		/// * * Item Props * * ///
+		/* The item does not need physics while waiting to be picked up */
+		ItemMesh->SetSimulatePhysics(false);
+		ItemMesh->SetVisibility(true);
+		/* The mesh should not be using collision for interaction *** Uses the Interaction Box */
+		ItemMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+		ItemMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+		/// * * Collision & Physics Props * * ///
+		/* Clear all collision settings for the Collision Box */
+		CollisionBox->SetCollisionResponseToAllChannels(ECR_Ignore);
+		/* Set it to Block the Visibility Channel */
+		CollisionBox->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+		/* Collsion Enabled to query for raycasts and simulate rigid bodies/constraints */
+		CollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		
+		break;
+
+	case EItemState::EIS_Equipped:
+		/// * * Item Props * * ///
+		/* The item does not need physics while waiting to be picked up */
+		ItemMesh->SetSimulatePhysics(false);
+		ItemMesh->SetVisibility(true);
+
+		/* The mesh should not be using collision for interaction *** Uses the Interaction Box */
+		ItemMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+		ItemMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+		/// * * Collision & Physics Props * * ///
+		/* Clear all collision settings for the Collision Box */
+		CollisionBox->SetCollisionResponseToAllChannels(ECR_Ignore);
+		/* Collsion Enabled should be turned off while the item/weapon is equipped */
+		CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		break;
+	}
 }
 
+void AItem_Base::SetItemState(EItemState State)
+{
+	ItemState = State;
+	
+	/* Update the item properties when the state is changed  */
+	SetItemProps(State);
+}
