@@ -35,6 +35,8 @@ public:
 	/* Applies and impulse to the weapon it the forward direction *** Called in DropWeapon() */
 	void ThrowWeapon();
 
+	void SwapWeapon();
+
 	/* Weapon Delegates */
 	FOnFireDelegate FireDelegate;
 	FWeaponTraceDelegate WeaponTraceDelegate;
