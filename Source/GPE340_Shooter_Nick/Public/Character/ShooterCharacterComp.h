@@ -50,6 +50,8 @@ public:
 	// TODO: Refactor for when the holdable weapon logic is done.  Will Get the socket from the mesh of the held actor.
 	void SetWeaponSocketTransform();
 
+	void DropWeapon();
+
 	/* Used for retrieving generic data that is need to access the anim instance */
 	TObjectPtr<ANick_ShooterCharacter> OwningCharacter;
 
@@ -120,6 +122,9 @@ protected:
 	
 	/* Equips the weapon to the character by socket */
 	void EquipWeapon(AWeapon_Base* WeaponToBeEquipped);
+
+	/* Remove weapon from the character mesh and apply physics and collision */
+	
 	
 private:
 	/* Location of the bullet vapor particle endpoint */

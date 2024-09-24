@@ -90,6 +90,7 @@ void AItem_Base::SetItemProps(EItemState State)
 		/// * * Item Props * * ///
 		/* The item does not need physics while waiting to be picked up */
 		ItemMesh->SetSimulatePhysics(false);
+		ItemMesh->SetEnableGravity(false);
 		ItemMesh->SetVisibility(true);
 		/* The mesh should not be using collision for interaction *** Uses the Interaction Box */
 		ItemMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
@@ -109,6 +110,7 @@ void AItem_Base::SetItemProps(EItemState State)
 		/// * * Item Props * * ///
 		/* The item does not need physics while waiting to be picked up */
 		ItemMesh->SetSimulatePhysics(false);
+		ItemMesh->SetEnableGravity(false);
 		ItemMesh->SetVisibility(true);
 
 		/* The mesh should not be using collision for interaction *** Uses the Interaction Box */
@@ -116,6 +118,21 @@ void AItem_Base::SetItemProps(EItemState State)
 		ItemMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 		/// * * Collision & Physics Props * * ///
+		/* Clear all collision settings for the Collision Box */
+		CollisionBox->SetCollisionResponseToAllChannels(ECR_Ignore);
+		/* Collsion Enabled should be turned off while the item/weapon is equipped */
+		CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		break;
+
+	case EItemState::EIS_Falling:
+		
+		/// * * Collision & Physics Props * * ///
+		ItemMesh->SetSimulatePhysics(true);
+		ItemMesh->SetEnableGravity(true);
+		ItemMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		ItemMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+		ItemMesh->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+
 		/* Clear all collision settings for the Collision Box */
 		CollisionBox->SetCollisionResponseToAllChannels(ECR_Ignore);
 		/* Collsion Enabled should be turned off while the item/weapon is equipped */

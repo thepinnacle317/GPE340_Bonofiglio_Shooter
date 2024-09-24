@@ -38,6 +38,7 @@ Input Mapping Contexts = IMC_<Name>
 *** Character Component ***
 - Holds a reference to the currently held actor
 - Will hold all the animations for properties
+- Add a bool that will trigger with the drop and equip methods.  This will be used to go from the unarmed to armed states of animation.
 
 *** Character Attributes ***
 - This component will only hold values and methods that do not require casting to reference the games specific character.  

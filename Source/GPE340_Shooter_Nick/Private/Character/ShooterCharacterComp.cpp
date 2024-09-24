@@ -144,6 +144,8 @@ void UShooterCharacterComp::EquipWeapon(AWeapon_Base* WeaponToBeEquipped)
 		/* Sets the Current Weapon to the weapon that was spawned */
 		CurrentWeapon = WeaponToBeEquipped;
 
+		/* This is a hard reference for the weapon and its component */
+		// This needs to be cleaned up when swapping, dropping, and destroying as well.
 		CurrentWeapon->OwningCharacter = OwningCharacter;
 		CurrentWeapon->WeaponComponent->OwningShooterCharacter = OwningCharacter;
 
@@ -151,6 +153,22 @@ void UShooterCharacterComp::EquipWeapon(AWeapon_Base* WeaponToBeEquipped)
 		/* Set Collision Box to ignore all collision channels, so we do not hit it or trigger the widget Based on the state*/
 		CurrentWeapon->SetItemState(EItemState::EIS_Equipped);
 	}
+}
+
+void UShooterCharacterComp::DropWeapon()
+{
+	if (CurrentWeapon)
+	{
+		FDetachmentTransformRules DetachRules(EDetachmentRule::KeepWorld,true);
+		CurrentWeapon->GetItemMesh()->DetachFromComponent(DetachRules);
+
+		/* Set the Item State when we drop the weapon so that the collision and physics are handled */
+		CurrentWeapon->SetItemState(EItemState::EIS_Falling);
+		CurrentWeapon->WeaponComponent->ThrowWeapon();
+	}
+	
+	/* Set the Weapon to null since we no longer have possession of the weapon */
+	CurrentWeapon = nullptr;
 }
 
 void UShooterCharacterComp::FirePressed()

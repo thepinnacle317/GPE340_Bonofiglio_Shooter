@@ -14,9 +14,4 @@ AWeapon_Base::AWeapon_Base()
 void AWeapon_Base::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	if (OwningCharacter)
-	{
-		WeaponComponent->SetOwningShooterCharacter(OwningCharacter);
-	}
 }

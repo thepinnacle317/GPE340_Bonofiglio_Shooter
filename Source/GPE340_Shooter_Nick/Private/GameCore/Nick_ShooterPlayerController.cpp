@@ -35,6 +35,7 @@ void ANick_ShooterPlayerController::SetupInputComponent()
 	ShooterInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &ThisClass::AimStarted);
 	ShooterInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &ThisClass::AimCompleted);
 	ShooterInputComponent->BindAction(DodgeAction, ETriggerEvent::Triggered, this, &ThisClass::Dodge);
+	ShooterInputComponent->BindAction(DropItemAction, ETriggerEvent::Started, this, &ThisClass::DropHeldItem);
 
 }
 
@@ -186,4 +187,9 @@ void ANick_ShooterPlayerController::AimCompleted()
 void ANick_ShooterPlayerController::Interact()
 {
 	// Future interaction controller method.
+}
+
+void ANick_ShooterPlayerController::DropHeldItem()
+{
+	PossessedCharacter->GetShooterComp()->DropWeapon();
 }

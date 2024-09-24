@@ -55,6 +55,8 @@ private:
 	TObjectPtr<UInputAction> AimAction;
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<UInputAction> DodgeAction;
+	UPROPERTY(EditAnywhere, Category="Input")
+	TObjectPtr<UInputAction> DropItemAction;
 
 	/* Movement */
 	void Move(const FInputActionValue& InputActionValue);
@@ -71,5 +73,6 @@ private:
 	void AimStarted();
 	void AimCompleted();
 	void Interact();
+	void DropHeldItem();
 	
 };
